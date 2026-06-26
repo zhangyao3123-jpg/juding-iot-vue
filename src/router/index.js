@@ -12,6 +12,7 @@ const legacyRoutes = [
   { path: '/repairs', name: 'repairs', title: '维修记录', file: 'repair-list.html' },
   { path: '/callbacks', name: 'callbacks', title: '客户回访', file: 'callback-list.html' },
   { path: '/customers', name: 'customers', title: '客户档案', file: 'customer-list.html' },
+  { path: '/customers/detail', name: 'customer-detail', title: '客户详情', file: 'customer-detail.html' },
   { path: '/models', name: 'models', title: '设备型号', file: 'device-model.html' },
   { path: '/reports', name: 'reports', title: '统计报表', file: 'report-page.html' },
   { path: '/settings', name: 'settings', title: '系统设置', file: 'system-settings.html' },

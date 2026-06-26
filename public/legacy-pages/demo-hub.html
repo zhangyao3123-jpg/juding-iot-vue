@@ -247,8 +247,13 @@ table.dt tbody tr:hover{background:var(--primary-soft)}
 .cell-mono{font-family:"Consolas",monospace;color:var(--primary-2);font-size:12.5px;font-weight:600}
 .cell-num{font-variant-numeric:tabular-nums;color:var(--text-strong);font-weight:600}
 .pager{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--line-soft)}
-.pager .info-txt{font-size:12px;color:var(--text-dim)}
+.pager-left{display:flex;align-items:center;gap:12px}
+.pager .info-txt{font-size:12px;color:var(--text-dim);white-space:nowrap}
 .pager .info-txt b{color:var(--text-strong)}
+.page-size-wrap{display:flex;align-items:center;gap:6px}
+.page-size-wrap label{font-size:12px;color:var(--text-dim);white-space:nowrap}
+.page-size-wrap .select-mini{height:30px;font-size:12px;border-radius:8px;padding:0 28px 0 10px;background:var(--glass);border:1px solid var(--line);color:var(--text-base);appearance:none;-webkit-appearance:none;cursor:pointer}
+.page-current-info{font-size:12px;color:var(--text-dim);white-space:nowrap}
 .page-nums{display:flex;gap:5px}
 .page-nums .pn{min-width:32px;height:32px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-dim);cursor:pointer;transition:.18s;background:var(--glass)}
 .page-nums .pn:hover{color:var(--primary);border-color:var(--primary)}
@@ -292,88 +297,276 @@ table.dt tbody tr:hover{background:var(--primary-soft)}
 .theme-dots span{width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.2)}
 
 /* ============================================================
-   ★ 数据大屏全屏覆盖层
+   ★ 数据大屏 · 久鼎深蓝指挥中心
    ============================================================ */
 .screen{
-  position:fixed;inset:0;z-index:200;background:#020916;
-  display:none;flex-direction:column;color:#dffbff;
-  font-family:"Segoe UI","PingFang SC",sans-serif;
+  position:fixed;inset:0;z-index:200;
+  background:#080c1c;
+  display:none;flex-direction:column;
+  color:#c8d0e7;
+  font-family:"PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+  overflow:hidden;
 }
-.screen.show{display:flex;animation:screenIn .6s ease}
-@keyframes screenIn{from{opacity:0}to{opacity:1}}
-.screen-bg{position:absolute;inset:0;z-index:0;pointer-events:none;
+.screen.show{display:flex}
+
+/* 深邃分层背景 */
+.screen-bg{
+  position:absolute;inset:0;z-index:0;pointer-events:none;
   background:
-    radial-gradient(circle at 50% 45%,rgba(8,225,255,.18),transparent 26%),
-    radial-gradient(circle at 18% 22%,rgba(44,93,255,.2),transparent 22%),
-    radial-gradient(circle at 88% 70%,rgba(0,255,194,.12),transparent 24%),
-    linear-gradient(180deg,#06172d 0%,#020916 60%,#01040b 100%);
+    radial-gradient(ellipse 90% 40% at 50% 0%, rgba(25,40,67,.95) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 50% at 100% 100%, rgba(12,18,40,.9) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 0% 90%, rgba(10,16,38,.8) 0%, transparent 50%),
+    linear-gradient(180deg,#0d1228 0%,#080c1c 40%,#060918 100%);
 }
-.screen-bg::before{content:"";position:absolute;inset:0;
-  background-image:linear-gradient(rgba(93,227,255,.075) 1px,transparent 1px),linear-gradient(90deg,rgba(93,227,255,.075) 1px,transparent 1px);
-  background-size:40px 40px;animation:gridMove 20s linear infinite}
-@keyframes gridMove{to{background-position:0 80px,80px 0}}
-.scanline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,236,255,.5),transparent);animation:scan 6s linear infinite;z-index:1}
-@keyframes scan{0%{top:-2px}100%{top:100%}}
+/* 精细网格纹理 */
+.screen-bg::before{
+  content:"";position:absolute;inset:0;opacity:.35;
+  background-image:
+    linear-gradient(rgba(124,243,244,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(124,243,244,.025) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+/* 底部暗角 */
+.screen-bg::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:200px;
+  background:linear-gradient(transparent,rgba(6,9,24,.7));
+  pointer-events:none;
+}
 
-.screen-top{position:relative;z-index:2;height:74px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;
-  background:linear-gradient(180deg,rgba(7,42,82,.7),transparent);border-bottom:1px solid rgba(91,236,255,.2)}
-.screen-title{font-size:28px;font-weight:900;letter-spacing:8px;color:#dffcff;text-shadow:0 0 18px rgba(0,236,255,.7);display:flex;align-items:center;gap:14px}
-.screen-title .deco{width:30px;height:30px;border:2px solid #00e6ff;transform:rotate(45deg);position:relative}
-.screen-title .deco::before{content:"";position:absolute;inset:5px;background:#00e6ff;opacity:.6}
-.screen-exit{padding:9px 20px;border-radius:8px;border:1px solid rgba(91,236,255,.4);background:rgba(5,30,63,.7);color:#8fefff;cursor:pointer;font-size:13px;transition:.2s}
-.screen-exit:hover{background:#00e6ff;color:#021018}
+/* ========== 顶部导航 ========== */
+.screen-top{
+  position:relative;z-index:2;height:70px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 36px;
+  background:rgba(8,12,28,.9);
+  border-bottom:1px solid rgba(14,31,65,.8);
+  flex-shrink:0;
+}
+.screen-brand{display:flex;align-items:center;gap:16px}
+.screen-brand .logo{
+  width:42px;height:42px;border-radius:10px;
+  background:linear-gradient(135deg,#1a3a5c,#0d2240);
+  border:1px solid rgba(124,243,244,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:800;color:#7cf3f4;
+  box-shadow:0 0 20px rgba(124,243,244,.15),0 4px 12px rgba(0,0,0,.4);
+  text-shadow:0 0 10px rgba(124,243,244,.5);
+}
+.screen-title{
+  font-size:13px;font-weight:500;letter-spacing:4px;color:rgba(200,208,231,.7);
+  text-transform:uppercase;
+}
+.screen-clock{
+  display:flex;flex-direction:column;align-items:flex-end;
+}
+.screen-clock .time{
+  font-size:28px;font-weight:200;color:#e8ecff;letter-spacing:4px;
+  font-variant-numeric:tabular-nums;line-height:1;
+}
+.screen-clock .date{
+  font-size:10px;color:rgba(124,243,244,.4);letter-spacing:2px;margin-top:4px;
+}
+.screen-exit{
+  padding:8px 20px;border-radius:6px;
+  border:1px solid rgba(14,31,65,.8);
+  background:rgba(14,31,65,.3);color:rgba(200,208,231,.5);
+  cursor:pointer;font-size:11px;letter-spacing:1px;
+  transition:.2s;font-family:inherit;
+}
+.screen-exit:hover{
+  background:rgba(14,31,65,.6);border-color:rgba(124,243,244,.2);
+  color:rgba(124,243,244,.7);
+}
 
-.screen-body{position:relative;z-index:2;flex:1;display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:16px;padding:18px 28px;min-height:0}
-.screen-col{display:flex;flex-direction:column;gap:16px}
-.s-panel{flex:1;border:1px solid rgba(70,222,255,.3);background:linear-gradient(145deg,rgba(4,20,43,.82),rgba(3,12,30,.58));box-shadow:inset 0 0 0 1px rgba(105,241,255,.06),0 18px 46px rgba(0,0,0,.38);clip-path:polygon(16px 0,100% 0,100% calc(100% - 16px),calc(100% - 16px) 100%,0 100%,0 16px);padding:16px 18px;display:flex;flex-direction:column;min-height:0;position:relative;overflow:hidden}
-.s-panel::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,#6ff8ff,transparent)}
-.s-panel h4{font-size:14px;color:#baf7ff;letter-spacing:2px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-.s-panel h4::before{content:"";width:3px;height:14px;background:#00e6ff;box-shadow:0 0 8px #00e6ff}
+/* ========== 主体区域 ========== */
+.screen-body{
+  position:relative;z-index:2;flex:1;display:flex;flex-direction:column;
+  padding:18px 36px 22px;gap:16px;min-height:0;overflow:hidden;
+}
 
-.s-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
-.s-stat{border:1px solid rgba(70,222,255,.2);background:rgba(0,40,80,.3);border-radius:8px;padding:12px;display:flex;flex-direction:column;justify-content:center}
-.s-stat .v{font-size:26px;font-weight:900;color:#00e6ff;text-shadow:0 0 12px rgba(0,230,255,.5);font-variant-numeric:tabular-nums}
-.s-stat .l{font-size:11px;color:#7fc8e0;margin-top:4px;letter-spacing:1px}
+/* ========== KPI卡片 ========== */
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex-shrink:0}
+.kpi-card{
+  background:rgba(14,22,48,.6);
+  border:1px solid rgba(14,31,65,.8);
+  border-radius:12px;padding:18px 20px;
+  display:flex;align-items:center;gap:16px;
+  position:relative;overflow:hidden;
+  transition:.2s;
+}
+.kpi-card:hover{border-color:rgba(124,243,244,.15)}
+.kpi-card::after{
+  content:"";position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(124,243,244,.2),transparent);
+}
+.kpi-icon{
+  width:44px;height:44px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;flex-shrink:0;
+  background:rgba(124,243,244,.05);
+  border:1px solid rgba(124,243,244,.1);
+}
+.kpi-info{flex:1;min-width:0}
+.kpi-info .label{
+  font-size:9.5px;color:rgba(200,208,231,.3);letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:6px;
+}
+.kpi-info .value{
+  font-size:30px;font-weight:700;color:#e8ecff;
+  font-variant-numeric:tabular-nums;line-height:1;
+  letter-spacing:-1px;
+}
+.kpi-info .sub{
+  font-size:10px;color:rgba(124,243,244,.4);margin-top:5px;
+  display:flex;align-items:center;gap:4px;
+}
 
-.bar-list{flex:1;display:flex;flex-direction:column;justify-content:space-around;gap:8px}
-.bar-row{display:flex;align-items:center;gap:10px;font-size:12px}
-.bar-row .name{width:90px;color:#9fdcef;flex:none}
-.bar-row .track{flex:1;height:14px;background:rgba(0,40,80,.5);border-radius:7px;overflow:hidden;position:relative}
-.bar-row .fill{height:100%;background:linear-gradient(90deg,#00e6ff,#2f6dff);border-radius:7px;box-shadow:0 0 10px rgba(0,230,255,.5);position:relative}
-.bar-row .fill::after{content:"";position:absolute;right:0;top:0;bottom:0;width:8px;background:rgba(255,255,255,.5);filter:blur(2px)}
-.bar-row .num{width:42px;text-align:right;color:#00e6ff;font-weight:700;flex:none;font-variant-numeric:tabular-nums}
+/* ========== 三列主区域 ========== */
+.main-grid{
+  flex:1;display:grid;grid-template-columns:1fr 1.1fr 1fr;
+  gap:16px;min-height:0;
+}
+.screen-col{display:flex;flex-direction:column;gap:16px;min-height:0}
 
-.center-ring{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
+/* ========== 面板 ========== */
+.s-panel{
+  background:rgba(10,16,36,.5);
+  border:1px solid rgba(14,31,65,.6);
+  border-radius:14px;padding:20px;
+  flex:1;min-height:0;
+  display:flex;flex-direction:column;
+  position:relative;overflow:hidden;
+  transition:.2s;
+}
+.s-panel:hover{border-color:rgba(14,31,65,.9)}
+.s-panel h4{
+  font-size:9.5px;color:rgba(124,243,244,.4);letter-spacing:2.5px;
+  text-transform:uppercase;font-weight:500;margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;flex-shrink:0;
+}
+.s-panel h4::before{
+  content:"";width:10px;height:1px;
+  background:rgba(124,243,244,.3);
+}
+
+/* 区域进度条 */
+.bar-list{display:flex;flex-direction:column;gap:10px;flex:1}
+.bar-row{display:flex;align-items:center;gap:10px;font-size:11.5px}
+.bar-row .name{width:60px;color:rgba(200,208,231,.35);flex:none;font-size:11px;letter-spacing:.5px}
+.bar-row .track{flex:1;height:3px;background:rgba(255,255,255,.03);border-radius:2px;overflow:hidden}
+.bar-row .fill{
+  height:100%;border-radius:2px;
+  background:linear-gradient(90deg,rgba(124,243,244,.4),rgba(124,243,244,.7));
+  position:relative;
+}
+.bar-row .fill::after{
+  content:"";position:absolute;right:0;top:0;bottom:0;width:3px;
+  background:rgba(124,243,244,1);
+  box-shadow:0 0 6px rgba(124,243,244,.8);
+}
+.bar-row .num{width:28px;text-align:right;color:rgba(124,243,244,.6);font-size:11px;font-weight:600;flex:none;font-variant-numeric:tabular-nums}
+
+/* 中列：主环形 */
+.center-ring-wrap{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
 .ring-svg{width:200px;height:200px}
-.ring-svg .bg-circle{fill:none;stroke:rgba(0,230,255,.12);stroke-width:10}
-.ring-svg .fg-circle{fill:none;stroke:url(#ringGrad);stroke-width:10;stroke-linecap:round;transform:rotate(-90deg);transform-origin:center;filter:drop-shadow(0 0 8px rgba(0,230,255,.6))}
+.ring-svg .bg-ring{
+  fill:none;stroke:rgba(14,31,65,.8);stroke-width:8;
+}
+.ring-svg .fg-ring{
+  fill:none;stroke:url(#cyanGrad);stroke-width:8;stroke-linecap:round;
+  transform:rotate(-90deg);transform-origin:center;
+  filter:drop-shadow(0 0 12px rgba(124,243,244,.4));
+}
 .ring-center{position:absolute;text-align:center}
-.ring-center .v{font-size:42px;font-weight:900;color:#dffcff;text-shadow:0 0 16px rgba(0,236,255,.7)}
-.ring-center .l{font-size:12px;color:#7fc8e0;letter-spacing:2px}
-.center-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px}
-.center-stats .cs{text-align:center;border-top:1px solid rgba(70,222,255,.2);padding-top:10px}
-.center-stats .cs .v{font-size:22px;font-weight:800;color:#00e6ff}
-.center-stats .cs .l{font-size:10px;color:#7fc8e0;margin-top:3px}
+.ring-center .pct{font-size:44px;font-weight:700;color:#e8ecff;letter-spacing:-1px;line-height:1}
+.ring-center .txt{font-size:8.5px;color:rgba(124,243,244,.35);letter-spacing:3px;text-transform:uppercase;margin-top:6px}
+.center-kpis{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:rgba(14,31,65,.4);border-radius:10px;overflow:hidden;
+  margin-top:16px;
+}
+.ck{flex:1;background:rgba(8,12,28,.5);padding:12px 8px;text-align:center}
+.ck .v{font-size:18px;font-weight:600;color:#e8ecff;font-variant-numeric:tabular-nums}
+.ck .l{font-size:9px;color:rgba(200,208,231,.25);letter-spacing:.5px;margin-top:4px}
 
-.live-feed{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:8px}
-.live-row{display:flex;gap:10px;font-size:12px;padding:7px 0;border-bottom:1px dashed rgba(70,222,255,.12)}
-.live-row .lt{flex:none;font-size:11px;color:#5b8fa8;width:50px}
-.live-row .lc{flex:1;color:#9fdcef}
-.live-row .lc b{color:#00e6ff}
-.live-row .ld{flex:none;font-size:10px;padding:1px 6px;border-radius:3px}
-.live-row .ld.err{color:#ff6b8a;background:rgba(255,107,138,.12)}
-.live-row .ld.ok{color:#00ff9d;background:rgba(0,255,157,.1)}
+/* 实时动态 */
+.live-feed{flex:1;overflow:hidden;display:flex;flex-direction:column;gap:3px}
+.live-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 10px;border-radius:6px;font-size:11.5px;
+  transition:.15s;
+  border-bottom:1px solid rgba(14,31,65,.3);
+}
+.live-row:hover{background:rgba(14,31,65,.3)}
+.live-row .lt{width:44px;flex:none;color:rgba(200,208,231,.2);font-size:10.5px;font-variant-numeric:tabular-nums}
+.live-row .lc{flex:1;color:rgba(200,208,231,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.live-row .lc b{color:rgba(124,243,244,.75);font-weight:600;margin-right:4px}
+.live-row .ld{flex:none;font-size:9.5px;padding:2px 7px;border-radius:4px;font-weight:500;letter-spacing:.3px}
+.live-row .ld.err{color:#e12824;background:rgba(225,40,36,.08);border:1px solid rgba(225,40,36,.15)}
+.live-row .ld.warn{color:#d9a020;background:rgba(217,160,32,.08);border:1px solid rgba(217,160,32,.15)}
+.live-row .ld.ok{color:#7bdf81;background:rgba(123,223,129,.08);border:1px solid rgba(123,223,129,.15)}
 
-.pie-mini{flex:1;display:flex;align-items:center;justify-content:center;gap:20px}
-.pie-legend{font-size:12px;color:#9fdcef}
-.pie-legend li{list-style:none;display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.pie-legend .dot{width:10px;height:10px;border-radius:2px}
+/* 饼图 */
+.pie-wrap{display:flex;align-items:center;gap:18px;flex:1;padding:2px 0}
+.pie-svg{width:88px;height:88px;flex-shrink:0}
+.pie-svg circle{fill:none;stroke-width:10;transform:rotate(-90deg);transform-origin:center}
+.pie-legend{flex:1}
+.pie-legend li{list-style:none;display:flex;align-items:center;gap:8px;font-size:11.5px;color:rgba(200,208,231,.4);margin-bottom:8px}
+.pie-legend .dot{width:7px;height:7px;border-radius:2px;flex-shrink:0}
 
-.radar-spin{position:absolute;right:24px;top:18px;width:80px;height:80px;border-radius:50%;border:1px solid rgba(84,238,255,.25);background:conic-gradient(from 0deg,rgba(0,238,255,.5),transparent 30%);animation:spin 6s linear infinite;opacity:.7}
-@keyframes spin{to{transform:rotate(360deg)}}
+/* ========== 底部状态条 ========== */
+.screen-footer{
+  position:relative;z-index:2;height:26px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 36px;
+  border-top:1px solid rgba(14,31,65,.5);
+  flex-shrink:0;
+}
+.footer-item{display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(200,208,231,.18);letter-spacing:.5px}
+.footer-item .dot{width:5px;height:5px;border-radius:50%;background:#7bdf81;animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 4px rgba(123,223,129,.6)}50%{opacity:.4;box-shadow:none}}
 
 /* 标识角标 */
 .design-badge{position:fixed;right:18px;bottom:18px;z-index:50;padding:8px 14px;border-radius:30px;font-size:11px;letter-spacing:1px;font-weight:600;background:var(--glass);border:1px solid var(--line);color:var(--text-strong);backdrop-filter:blur(14px)}
+
+/* ========== 通知抽屉 ========== */
+.notif-mask{position:fixed;inset:0;background:rgba(5,8,20,.5);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.notif-mask.open{opacity:1;visibility:visible}
+.notif-drawer{position:fixed;top:0;right:0;bottom:0;width:400px;z-index:101;background:var(--bg-base);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)}
+.notif-drawer.open{transform:translateX(0)}
+.notif-head{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px;border-bottom:1px solid var(--line)}
+.notif-title{display:flex;align-items:center;gap:10px}
+.notif-title h2{font-size:17px;color:var(--text-strong);font-weight:700}
+.notif-badge{min-width:20px;height:20px;background:var(--err);color:#fff;font-size:11px;font-weight:700;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.notif-actions{display:flex;align-items:center;gap:8px}
+.notif-markread{background:none;border:none;color:var(--primary);font-size:12.5px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:7px;transition:.18s}
+.notif-markread:hover{background:var(--primary-soft)}
+.notif-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.5);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.18s}
+.notif-close:hover{color:var(--text-strong);background:var(--glass-hover)}
+.notif-tabs{display:flex;gap:4px;padding:12px 16px;border-bottom:1px solid var(--line-soft)}
+.notif-tab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;transition:.18s}
+.notif-tab:hover{color:var(--text-base)}
+.notif-tab.active{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.notif-list{flex:1;overflow-y:auto;padding:8px 8px}
+.notif-item{display:flex;gap:12px;padding:14px 14px;border-radius:12px;cursor:pointer;transition:.18s;position:relative;align-items:flex-start}
+.notif-item:hover{background:var(--glass-hover)}
+.notif-item.unread{background:rgba(14,165,233,.04)}
+.notif-item.unread:hover{background:rgba(14,165,233,.08)}
+.notif-icon{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.notif-icon.alarm{background:rgba(239,68,68,.13);color:var(--err)}
+.notif-icon.warn{background:rgba(245,158,11,.15);color:var(--warn)}
+.notif-icon.order{background:var(--primary-soft);color:var(--primary)}
+.notif-icon.ok{background:rgba(16,185,129,.14);color:var(--ok)}
+.notif-icon.sys{background:rgba(139,92,246,.13);color:var(--primary-2)}
+.notif-body{flex:1;min-width:0}
+.notif-msg{font-size:13px;color:var(--text-base);line-height:1.5}
+.notif-msg b{color:var(--text-strong);font-weight:600}
+.notif-meta{display:flex;align-items:center;gap:10px;margin-top:5px;font-size:11.5px;color:var(--text-faint)}
+.notif-device{font-family:"Consolas",monospace;font-size:11px;background:rgba(14,165,233,.1);color:var(--primary);padding:1px 6px;border-radius:5px}
+.notif-tag{background:var(--glass);border:1px solid var(--line);padding:1px 6px;border-radius:5px}
+.notif-unread-dot{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--primary)}
+
 </style>
 </head>
 <body data-theme="fluent">
@@ -390,10 +583,9 @@ table.dt tbody tr:hover{background:var(--primary-soft)}
     <div class="search"><span class="ico">🔍</span><input placeholder="搜索设备编号、客户、工单…"></div>
     <div class="spacer"></div>
     <div class="top-actions">
-      <!-- ★ 两个演示按钮(纯图标) -->
-      <button class="demo-btn screen icon-only" onclick="openScreen()">🖥<span class="tip">数据大屏</span></button>
-      <button class="demo-btn icon-only" onclick="openDrawer()">🎨<span class="tip">UI样式</span></button>
-      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <a class="icon-btn" href="#" onclick="openScreen();return false" title="数据大屏">🖥</a>
+      <div class="icon-btn" title="主题" onclick="openDrawer()">🎨</div>
+      <div class="icon-btn" title="通知" onclick="openNotif()">🔔<span class="dot"></span></div>
       <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
     </div>
   </header>
@@ -504,7 +696,19 @@ table.dt tbody tr:hover{background:var(--primary-soft)}
           </tbody>
         </table>
         <div class="pager">
-          <div class="info-txt">共 <b>128</b> 条，每页 10 条</div>
+          <div class="pager-left">
+            <div class="info-txt">共 <b id="totalCount">128</b> 条</div>
+            <div class="page-size-wrap">
+              <label>每页</label>
+              <select class="select-mini" id="pageSizeSelect" onchange="changePageSize(this.value)">
+                <option value="10">10 条</option>
+                <option value="20">20 条</option>
+                <option value="50">50 条</option>
+                <option value="100">100 条</option>
+              </select>
+            </div>
+            <div class="page-current-info">，当前 <b id="currentPage">1</b>/<b id="totalPages">13</b> 页</div>
+          </div>
           <div class="page-nums"><span class="pn">‹</span><span class="pn active">1</span><span class="pn">2</span><span class="pn">3</span><span class="pn">…</span><span class="pn">13</span><span class="pn">›</span></div>
         </div>
       </div>
@@ -522,86 +726,147 @@ table.dt tbody tr:hover{background:var(--primary-soft)}
   <div class="drawer-body" id="themeList"></div>
 </aside>
 
-<!-- ============ 数据大屏 ============ -->
+<!-- ============ 数据大屏 · 久鼎深蓝指挥中心 ============ -->
 <div class="screen" id="screen">
   <div class="screen-bg"></div>
-  <div class="scanline"></div>
-  <div class="radar-spin"></div>
+
+  <!-- 顶部导航 -->
   <div class="screen-top">
-    <div class="screen-title"><span class="deco"></span>久鼎物联网监控指挥中心</div>
-    <button class="screen-exit" onclick="closeScreen()">‹ 返回后台</button>
+    <div class="screen-brand">
+      <div class="logo">久</div>
+      <div class="screen-title">久鼎物联网 · 智能指挥中心</div>
+    </div>
+    <div class="screen-clock">
+      <div class="time" id="screenTime">--:--:--</div>
+      <div class="date" id="screenDate">----/--/--</div>
+    </div>
+    <button class="screen-exit" onclick="closeScreen()">‹ 返回</button>
   </div>
+
+  <!-- 主体 -->
   <div class="screen-body">
-    <!-- 左列 -->
-    <div class="screen-col">
-      <div class="s-panel">
-        <h4>设备总览</h4>
-        <div class="s-stat-grid">
-          <div class="s-stat"><div class="v">1284</div><div class="l">在线设备</div></div>
-          <div class="s-stat"><div class="v" style="color:#ff6b8a">37</div><div class="l">异常告警</div></div>
-          <div class="s-stat"><div class="v" style="color:#fbbf24">89</div><div class="l">今日活跃</div></div>
-          <div class="s-stat"><div class="v" style="color:#5b8fa8">128</div><div class="l">离线设备</div></div>
+
+    <!-- KPI行 -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-icon">🖥</div>
+        <div class="kpi-info">
+          <div class="label">设备总数</div>
+          <div class="value">1,562</div>
+          <div class="sub">本季度 +12.3%</div>
         </div>
       </div>
-      <div class="s-panel">
-        <h4>区域设备分布</h4>
-        <div class="bar-list">
-          <div class="bar-row"><span class="name">华东地区</span><div class="track"><div class="fill" style="width:86%"></div></div><span class="num">426</span></div>
-          <div class="bar-row"><span class="name">华北地区</span><div class="track"><div class="fill" style="width:72%"></div></div><span class="num">358</span></div>
-          <div class="bar-row"><span class="name">西北地区</span><div class="track"><div class="fill" style="width:58%"></div></div><span class="num">289</span></div>
-          <div class="bar-row"><span class="name">华中地区</span><div class="track"><div class="fill" style="width:44%"></div></div><span class="num">218</span></div>
-          <div class="bar-row"><span class="name">华南地区</span><div class="track"><div class="fill" style="width:31%"></div></div><span class="num">154</span></div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:rgba(123,223,129,.05);border-color:rgba(123,223,129,.1)">✓</div>
+        <div class="kpi-info">
+          <div class="label">在线运行</div>
+          <div class="value" style="color:#7bdf81">1,284</div>
+          <div class="sub">▲ 较上月 +3.2%</div>
         </div>
       </div>
-    </div>
-    <!-- 中列 -->
-    <div class="screen-col">
-      <div class="s-panel">
-        <h4>整体运行健康度</h4>
-        <div class="center-ring">
-          <svg class="ring-svg" viewBox="0 0 200 200">
-            <defs><linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00e6ff"/><stop offset="100%" stop-color="#2f6dff"/></linearGradient></defs>
-            <circle class="bg-circle" cx="100" cy="100" r="85"/>
-            <circle class="fg-circle" cx="100" cy="100" r="85" stroke-dasharray="534" stroke-dashoffset="29"/>
-          </svg>
-          <div class="ring-center"><div class="v">94.6%</div><div class="l">HEALTH RATE</div></div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:rgba(225,40,36,.05);border-color:rgba(225,40,36,.1)">⚠</div>
+        <div class="kpi-info">
+          <div class="label">温度告警</div>
+          <div class="value" style="color:#e12824">7</div>
+          <div class="sub">▼ 本周 -2 起</div>
         </div>
-        <div class="center-stats">
-          <div class="cs"><div class="v">1562</div><div class="l">设备总数</div></div>
-          <div class="cs"><div class="v">82.1%</div><div class="l">在线率</div></div>
-          <div class="cs"><div class="v">2.4h</div><div class="l">平均响应</div></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon" style="background:rgba(200,208,231,.03);border-color:rgba(200,208,231,.06)">⏻</div>
+        <div class="kpi-info">
+          <div class="label">离线设备</div>
+          <div class="value" style="color:rgba(200,208,231,.5)">128</div>
+          <div class="sub">占比 8.2%</div>
         </div>
       </div>
     </div>
-    <!-- 右列 -->
-    <div class="screen-col">
-      <div class="s-panel">
-        <h4>实时告警动态</h4>
-        <div class="live-feed">
-          <div class="live-row"><span class="lt">11:41</span><span class="lc"><b>ZFFCW1445</b> 温度超限 28.3℃</span><span class="ld err">严重</span></div>
-          <div class="live-row"><span class="lt">11:38</span><span class="lc"><b>ZFFCW1502</b> 离线超 30 分</span><span class="ld err">告警</span></div>
-          <div class="live-row"><span class="lt">11:30</span><span class="lc"><b>ZFFCW1488</b> 恢复在线</span><span class="ld ok">恢复</span></div>
-          <div class="live-row"><span class="lt">11:22</span><span class="lc"><b>ZFFCW1471</b> 压力波动</span><span class="ld err">预警</span></div>
-          <div class="live-row"><span class="lt">11:15</span><span class="lc"><b>ZFFCW1446</b> 自检通过</span><span class="ld ok">正常</span></div>
-          <div class="live-row"><span class="lt">11:02</span><span class="lc"><b>ZFFCW1512</b> 绑定成功</span><span class="ld ok">正常</span></div>
+
+    <!-- 主内容 -->
+    <div class="main-grid">
+
+      <!-- 左列 -->
+      <div class="screen-col">
+        <div class="s-panel">
+          <h4>区域设备分布</h4>
+          <div class="bar-list">
+            <div class="bar-row"><span class="name">华东地区</span><div class="track"><div class="fill" style="width:86%"></div></div><span class="num">426</span></div>
+            <div class="bar-row"><span class="name">华北地区</span><div class="track"><div class="fill" style="width:72%"></div></div><span class="num">358</span></div>
+            <div class="bar-row"><span class="name">西北地区</span><div class="track"><div class="fill" style="width:58%"></div></div><span class="num">289</span></div>
+            <div class="bar-row"><span class="name">华中地区</span><div class="track"><div class="fill" style="width:44%"></div></div><span class="num">218</span></div>
+            <div class="bar-row"><span class="name">华南地区</span><div class="track"><div class="fill" style="width:31%"></div></div><span class="num">154</span></div>
+          </div>
+        </div>
+        <div class="s-panel">
+          <h4>工单类型占比</h4>
+          <div class="pie-wrap">
+            <svg class="pie-svg" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="38" stroke="rgba(14,31,65,.8)" stroke-width="10"/>
+              <circle cx="50" cy="50" r="38" stroke="rgba(124,243,244,.7)" stroke-width="10" stroke-dasharray="119.4 239" stroke-dashoffset="0"/>
+              <circle cx="50" cy="50" r="38" stroke="rgba(123,223,129,.55)" stroke-width="10" stroke-dasharray="69.6 239" stroke-dashoffset="-119.4"/>
+              <circle cx="50" cy="50" r="38" stroke="rgba(217,160,32,.5)" stroke-width="10" stroke-dasharray="50 239" stroke-dashoffset="-189"/>
+            </svg>
+            <ul class="pie-legend">
+              <li><span class="dot" style="background:rgba(124,243,244,.7)"></span>故障维修 50%</li>
+              <li><span class="dot" style="background:rgba(123,223,129,.55)"></span>定期保养 29%</li>
+              <li><span class="dot" style="background:rgba(217,160,32,.5)"></span>安装调试 21%</li>
+            </ul>
+          </div>
         </div>
       </div>
-      <div class="s-panel">
-        <h4>工单类型占比</h4>
-        <div class="pie-mini">
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <circle cx="50" cy="50" r="38" fill="none" stroke="#00e6ff" stroke-width="16" stroke-dasharray="120 240" transform="rotate(-90 50 50)"/>
-            <circle cx="50" cy="50" r="38" fill="none" stroke="#2f6dff" stroke-width="16" stroke-dasharray="70 240" stroke-dashoffset="-120" transform="rotate(-90 50 50)"/>
-            <circle cx="50" cy="50" r="38" fill="none" stroke="#fbbf24" stroke-width="16" stroke-dasharray="50 240" stroke-dashoffset="-190" transform="rotate(-90 50 50)"/>
-          </svg>
-          <ul class="pie-legend">
-            <li><span class="dot" style="background:#00e6ff"></span>故障维修 50%</li>
-            <li><span class="dot" style="background:#2f6dff"></span>定期保养 29%</li>
-            <li><span class="dot" style="background:#fbbf24"></span>安装调试 21%</li>
-          </ul>
+
+      <!-- 中列 -->
+      <div class="screen-col">
+        <div class="s-panel" style="border-color:rgba(14,31,65,.8)">
+          <h4>整体运行健康度</h4>
+          <div class="center-ring-wrap">
+            <svg class="ring-svg" viewBox="0 0 200 200">
+              <defs>
+                <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#7cf3f4"/>
+                  <stop offset="100%" stop-color="#3a9eb5"/>
+                </linearGradient>
+              </defs>
+              <circle class="bg-ring" cx="100" cy="100" r="82"/>
+              <circle class="fg-ring" cx="100" cy="100" r="82" stroke-dasharray="515.2" stroke-dashoffset="28.3"/>
+            </svg>
+            <div class="ring-center">
+              <div class="pct">94.6<span style="font-size:22px;font-weight:200">%</span></div>
+              <div class="txt">HEALTH RATE</div>
+            </div>
+          </div>
+          <div class="center-kpis">
+            <div class="ck"><div class="v">1,562</div><div class="l">设备总数</div></div>
+            <div class="ck"><div class="v">82.1<span style="font-size:13px">%</span></div><div class="l">在线率</div></div>
+            <div class="ck"><div class="v">2.4<span style="font-size:13px">h</span></div><div class="l">平均响应</div></div>
+          </div>
         </div>
       </div>
+
+      <!-- 右列 -->
+      <div class="screen-col">
+        <div class="s-panel">
+          <h4>实时告警动态</h4>
+          <div class="live-feed">
+            <div class="live-row"><span class="lt">11:41</span><span class="lc"><b>ZFFCW1445</b> 温度超限 28.3℃</span><span class="ld err">严重</span></div>
+            <div class="live-row"><span class="lt">11:38</span><span class="lc"><b>ZFFCW1502</b> 离线超 30 分</span><span class="ld warn">告警</span></div>
+            <div class="live-row"><span class="lt">11:30</span><span class="lc"><b>ZFFCW1488</b> 恢复在线</span><span class="ld ok">正常</span></div>
+            <div class="live-row"><span class="lt">11:22</span><span class="lc"><b>ZFFCW1471</b> 压力波动</span><span class="ld warn">预警</span></div>
+            <div class="live-row"><span class="lt">11:15</span><span class="lc"><b>ZFFCW1446</b> 自检通过</span><span class="ld ok">正常</span></div>
+            <div class="live-row"><span class="lt">11:02</span><span class="lc"><b>ZFFCW1512</b> 绑定成功</span><span class="ld ok">正常</span></div>
+            <div class="live-row"><span class="lt">10:55</span><span class="lc"><b>ZFFCW1499</b> 温度恢复</span><span class="ld ok">正常</span></div>
+          </div>
+        </div>
+      </div>
+
     </div>
+  </div>
+
+  <!-- 底部状态条 -->
+  <div class="screen-footer">
+    <div class="footer-item"><span class="dot"></span>数据实时同步 · 系统运行正常</div>
+    <div class="footer-item">久鼎物联网智能指挥中心</div>
+    <div class="footer-item">刷新间隔 5s</div>
   </div>
 </div>
 
@@ -635,15 +900,161 @@ function switchTheme(id){
   document.querySelectorAll('.theme-card').forEach(function(c){c.classList.toggle('active',c.dataset.id===id)});
   document.getElementById('badge').textContent='◈ '+THEME_LABEL[id]+' · 样式演示';
 }
+
+function changePageSize(size){
+  var total = 128;
+  var totalPages = Math.ceil(total / size);
+  document.getElementById('totalPages').textContent = totalPages.toLocaleString();
+  document.getElementById('totalCount').textContent = total.toLocaleString();
+  var pnContainer = document.querySelector('.page-nums');
+  var currentPage = 1;
+  var pages = [];
+  if(totalPages <= 7){
+    for(var i=1;i<=totalPages;i++) pages.push(i);
+  } else {
+    if(currentPage <= 4){for(var i=1;i<=5;i++) pages.push(i); pages.push("..."); pages.push(totalPages);}
+    else if(currentPage >= totalPages-3){pages.push(1); pages.push("..."); for(var i=totalPages-4;i<=totalPages;i++) pages.push(i);}
+    else{pages.push(1); pages.push("..."); for(var i=currentPage-1;i<=currentPage+1;i++) pages.push(i); pages.push("..."); pages.push(totalPages);}
+  }
+  var html = '<span class="pn">‹</span>';
+  pages.forEach(function(p){
+    if(p==="...") html += '<span class="pn">'+p+'</span>';
+    else html += '<span class="pn'+(p===currentPage?' active':'')+'">'+p+'</span>';
+  });
+  html += '<span class="pn">›</span>';
+  pnContainer.innerHTML = html;
+  document.getElementById('currentPage').textContent = '1';
+  document.getElementById('totalPages').textContent = totalPages.toLocaleString();
+}
 function openDrawer(){document.getElementById('mask').classList.add('open');document.getElementById('drawer').classList.add('open')}
 function closeDrawer(){document.getElementById('mask').classList.remove('open');document.getElementById('drawer').classList.remove('open')}
-function openScreen(){document.getElementById('screen').classList.add('show')}
+function openScreen(){
+  document.getElementById('screen').classList.add('show');
+  updateScreenClock();
+  if(!window._screenClockTimer){
+    window._screenClockTimer = setInterval(updateScreenClock,1000);
+  }
+}
+function updateScreenClock(){
+  var n=new Date();
+  var hh=String(n.getHours()).padStart(2,'0');
+  var mm=String(n.getMinutes()).padStart(2,'0');
+  var ss=String(n.getSeconds()).padStart(2,'0');
+  var el=document.getElementById('screenTime');
+  if(el) el.textContent=hh+':'+mm+':'+ss;
+  var d=[n.getFullYear(),String(n.getMonth()+1).padStart(2,'0'),String(n.getDate()).padStart(2,'0')].join('/');
+  var dl=document.getElementById('screenDate');
+  if(dl) dl.textContent=d;
+}
 function closeScreen(){document.getElementById('screen').classList.remove('show')}
 
 // ESC 关闭
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape'){closeDrawer();closeScreen()}
 });
+
+function openNotif(){
+  document.getElementById('notifMask').classList.add('open');
+  document.getElementById('notifDrawer').classList.add('open');
+}
+function closeNotif(){
+  document.getElementById('notifMask').classList.remove('open');
+  document.getElementById('notifDrawer').classList.remove('open');
+}
+function markAllRead(){
+  document.querySelectorAll('.notif-item.unread').forEach(function(el){
+    el.classList.remove('unread');
+    var dot = el.querySelector('.notif-unread-dot');
+    if(dot) dot.remove();
+  });
+  var badge = document.getElementById('notifBadge');
+  if(badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+  var bellDot = document.querySelector('.icon-btn[onclick*="openNotif"] .dot');
+  if(bellDot) bellDot.style.display = 'none';
+}
+function switchNotifTab(el){
+  document.querySelectorAll('.notif-tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  var tab = el.getAttribute('data-tab');
+  document.querySelectorAll('.notif-item').forEach(function(item){
+    item.style.display = (tab==='all' || item.getAttribute('data-type')===tab) ? 'flex' : 'none';
+  });
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeNotif();}});
+
 </script>
+
+<!-- ============ 通知抽屉 ============ -->
+<div class="notif-mask" id="notifMask" onclick="closeNotif()"></div>
+<aside class="notif-drawer" id="notifDrawer">
+  <div class="notif-head">
+    <div class="notif-title"><h2>通知中心</h2><span class="notif-badge" id="notifBadge">3</span></div>
+    <div class="notif-actions">
+      <button class="notif-markread" onclick="markAllRead()">全部已读</button>
+      <button class="notif-close" onclick="closeNotif()">✕</button>
+    </div>
+  </div>
+  <div class="notif-tabs">
+    <span class="notif-tab active" data-tab="all" onclick="switchNotifTab(this)">全部</span>
+    <span class="notif-tab" data-tab="alarm" onclick="switchNotifTab(this)">设备报警</span>
+    <span class="notif-tab" data-tab="order" onclick="switchNotifTab(this)">工单提醒</span>
+    <span class="notif-tab" data-tab="sys" onclick="switchNotifTab(this)">系统通知</span>
+  </div>
+  <div class="notif-list" id="notifList">
+    <div class="notif-item unread" data-type="alarm">
+      <div class="notif-icon alarm">⚠</div>
+      <div class="notif-body">
+        <div class="notif-msg"><b>制冷主机A</b> 排气压力异常偏高（1.62MPa），超过阈值1.50MPa，已自动停机保护</div>
+        <div class="notif-meta"><span class="notif-time">06-20 14:22</span><span class="notif-device">220112521</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item unread" data-type="alarm">
+      <div class="notif-icon warn">🌡</div>
+      <div class="notif-body">
+        <div class="notif-msg"><b>制冷主机B</b> 排气温度偏高 75.2℃，持续8分钟后自行恢复</div>
+        <div class="notif-meta"><span class="notif-time">06-18 09:15</span><span class="notif-device">220112522</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item unread" data-type="order">
+      <div class="notif-icon order">📋</div>
+      <div class="notif-body">
+        <div class="notif-msg">工单 <b>#GD20260615</b> 已派发，等待工程师接单处理</div>
+        <div class="notif-meta"><span class="notif-time">06-22 10:05</span><span class="notif-tag">工单</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item" data-type="order">
+      <div class="notif-icon ok">✓</div>
+      <div class="notif-body">
+        <div class="notif-msg">工单 <b>#GD20260502</b> 保养任务已完工，更换润滑油 + 滤芯</div>
+        <div class="notif-meta"><span class="notif-time">06-15 16:40</span><span class="notif-tag">工单</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="alarm">
+      <div class="notif-icon sys">📡</div>
+      <div class="notif-body">
+        <div class="notif-msg">设备 <b>220112523</b> 通讯中断12分钟，NB-IoT信号弱，自动重连成功</div>
+        <div class="notif-meta"><span class="notif-time">04-28 02:11</span><span class="notif-device">220112523</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="sys">
+      <div class="notif-icon sys">📈</div>
+      <div class="notif-body">
+        <div class="notif-msg">系统已于 <b>04-12 23:50</b> 完成固件升级，v3.1.0 → v3.2.1</div>
+        <div class="notif-meta"><span class="notif-time">04-12 23:50</span><span class="notif-tag">系统</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="sys">
+      <div class="notif-icon sys">🔔</div>
+      <div class="notif-body">
+        <div class="notif-msg">设备 <b>220112518</b> 维保合同将于 <b>30天后</b>（2026-07-24）到期，请及时续保</div>
+        <div class="notif-meta"><span class="notif-time">昨天 08:00</span><span class="notif-tag">维保</span></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
 </body>
 </html>

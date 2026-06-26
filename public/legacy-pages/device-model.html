@@ -15,9 +15,81 @@
 .spec-grid{display:flex;flex-wrap:wrap;gap:6px 14px}
 .spec-grid span{font-size:12px;color:var(--text-dim)}
 .spec-grid span b{color:var(--text-strong);font-weight:600;margin-right:3px}
+
+.pager-left{display:flex;align-items:center;gap:12px}
+.pager .info-txt{font-size:12px;color:var(--text-dim);white-space:nowrap}
+.pager .info-txt b{color:var(--text-strong)}
+.page-size-wrap{display:flex;align-items:center;gap:6px}
+.page-size-wrap label{font-size:12px;color:var(--text-dim);white-space:nowrap}
+.page-size-wrap .select-mini{height:30px;font-size:12px;border-radius:8px;padding:0 28px 0 10px;background-color:rgba(255,255,255,.6)}
+.page-current-info{font-size:12px;color:var(--text-dim);white-space:nowrap}
+
+/* ========== 通知抽屉 ========== */
+.notif-mask{position:fixed;inset:0;background:rgba(5,8,20,.5);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.notif-mask.open{opacity:1;visibility:visible}
+.notif-drawer{position:fixed;top:0;right:0;bottom:0;width:400px;z-index:101;background:var(--bg-base);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)}
+.notif-drawer.open{transform:translateX(0)}
+.notif-head{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px;border-bottom:1px solid var(--line)}
+.notif-title{display:flex;align-items:center;gap:10px}
+.notif-title h2{font-size:17px;color:var(--text-strong);font-weight:700}
+.notif-badge{min-width:20px;height:20px;background:var(--err);color:#fff;font-size:11px;font-weight:700;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.notif-actions{display:flex;align-items:center;gap:8px}
+.notif-markread{background:none;border:none;color:var(--primary);font-size:12.5px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:7px;transition:.18s}
+.notif-markread:hover{background:var(--primary-soft)}
+.notif-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.5);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.18s}
+.notif-close:hover{color:var(--text-strong);background:var(--glass-hover)}
+.notif-tabs{display:flex;gap:4px;padding:12px 16px;border-bottom:1px solid var(--line-soft)}
+.notif-tab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;transition:.18s}
+.notif-tab:hover{color:var(--text-base)}
+.notif-tab.active{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.notif-list{flex:1;overflow-y:auto;padding:8px 8px}
+.notif-item{display:flex;gap:12px;padding:14px 14px;border-radius:12px;cursor:pointer;transition:.18s;position:relative;align-items:flex-start}
+.notif-item:hover{background:var(--glass-hover)}
+.notif-item.unread{background:rgba(14,165,233,.04)}
+.notif-item.unread:hover{background:rgba(14,165,233,.08)}
+.notif-icon{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.notif-icon.alarm{background:rgba(239,68,68,.13);color:var(--err)}
+.notif-icon.warn{background:rgba(245,158,11,.15);color:var(--warn)}
+.notif-icon.order{background:var(--primary-soft);color:var(--primary)}
+.notif-icon.ok{background:rgba(16,185,129,.14);color:var(--ok)}
+.notif-icon.sys{background:rgba(139,92,246,.13);color:var(--primary-2)}
+.notif-body{flex:1;min-width:0}
+.notif-msg{font-size:13px;color:var(--text-base);line-height:1.5}
+.notif-msg b{color:var(--text-strong);font-weight:600}
+.notif-meta{display:flex;align-items:center;gap:10px;margin-top:5px;font-size:11.5px;color:var(--text-faint)}
+.notif-device{font-family:"Consolas",monospace;font-size:11px;background:rgba(14,165,233,.1);color:var(--primary);padding:1px 6px;border-radius:5px}
+.notif-tag{background:var(--glass);border:1px solid var(--line);padding:1px 6px;border-radius:5px}
+.notif-unread-dot{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--primary)}
+
+/* ---------- 主题切换抽屉 ---------- */
+body[data-theme="fluent"]{--bg-base:#eef1f8;--primary:#0ea5e9;--primary-2:#8b5cf6;--primary-soft:rgba(14,165,233,.12);--primary2-soft:rgba(139,92,246,.12);--text-strong:#0f172a;--text-base:#334155;--text-dim:#64748b;--text-faint:#94a3b8;--glass:rgba(255,255,255,.62);--glass-hover:rgba(255,255,255,.78);--line:rgba(15,23,42,.08);--line-soft:rgba(15,23,42,.05);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(15,23,42,.06);--shadow-md:0 8px 24px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.04);--shadow-lg:0 18px 48px rgba(79,70,229,.12),0 6px 14px rgba(15,23,42,.06)}
+body[data-theme="aurora"]{--bg-base:#0a0e27;--primary:#a855f7;--primary-2:#06b6d4;--primary-soft:rgba(168,85,247,.15);--primary2-soft:rgba(6,182,212,.15);--text-strong:#f0f4ff;--text-base:#c7d2fe;--text-dim:#8b95c7;--text-faint:#5b6494;--glass:rgba(20,28,60,.55);--glass-hover:rgba(30,40,80,.65);--line:rgba(140,160,220,.18);--line-soft:rgba(140,160,220,.07);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+body[data-theme="deep"]{--bg-base:#06172d;--primary:#00e6ff;--primary-2:#2f6dff;--primary-soft:rgba(0,230,255,.12);--primary2-soft:rgba(47,109,255,.12);--text-strong:#dffbff;--text-base:#9fdcef;--text-dim:#5b8fa8;--text-faint:#3d6075;--glass:rgba(8,30,55,.6);--glass-hover:rgba(12,40,72,.72);--line:rgba(0,230,255,.22);--line-soft:rgba(0,230,255,.08);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+body[data-theme="mineral"]{--bg-base:#0a1a1f;--primary:#14b8a6;--primary-2:#0ea5e9;--primary-soft:rgba(20,184,166,.12);--primary2-soft:rgba(14,165,233,.12);--text-strong:#d1f0ee;--text-base:#9fd6d0;--text-dim:#5b8a85;--text-faint:#3d5e5a;--glass:rgba(14,32,38,.62);--glass-hover:rgba(18,42,50,.74);--line:rgba(20,184,166,.22);--line-soft:rgba(20,184,166,.07);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+.drawer-mask{position:fixed;inset:0;background:rgba(5,8,20,.5);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.drawer-mask.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:92vw;z-index:101;background:var(--bg-base);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:18px;color:var(--text-strong);font-weight:700}
+.drawer-head h2 small{display:block;font-size:11px;color:var(--text-dim);font-weight:400;margin-top:4px}
+.drawer-close{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--glass);color:var(--text-dim);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s}
+.drawer-close:hover{color:var(--err);border-color:var(--err)}
+.drawer-body{flex:1;overflow-y:auto;padding:18px 20px}
+.theme-card{display:flex;align-items:center;gap:16px;padding:16px;border-radius:14px;border:2px solid var(--line);background:var(--glass);cursor:pointer;transition:.2s;position:relative;margin-bottom:12px}
+.theme-card:hover{border-color:var(--primary);transform:translateX(-3px)}
+.theme-card.active{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.theme-card.active::after{content:"✓ 当前";position:absolute;top:10px;right:12px;font-size:10px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2));padding:2px 8px;border-radius:10px}
+.theme-swatch{flex:none;width:64px;height:64px;border-radius:11px;overflow:hidden;position:relative;border:1px solid rgba(0,0,0,.1)}
+.theme-info{flex:1;min-width:0}
+.theme-info b{display:block;font-size:14px;color:var(--text-strong);font-weight:600}
+.theme-info p{font-size:11.5px;color:var(--text-dim);margin-top:3px;line-height:1.4}
+.theme-dots{display:flex;gap:4px;margin-top:8px}
+.theme-dots span{width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.2)}
+
 </style>
 </head>
-<body>
+<body data-theme="fluent">
 <div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 
 <div class="app">
@@ -26,9 +98,10 @@
       <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div></div>
     <div class="search"><span class="ico">🔍</span><input placeholder="搜索型号、名称…"></div>
     <div class="spacer"></div>
-    <div class="top-actions">
+        <div class="top-actions">
       <div class="icon-btn" title="数据大屏">🖥</div>
-      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="icon-btn" title="主题" onclick="openThemeDrawer()">🎨</div>
+      <div class="icon-btn" title="通知" onclick="openNotif()">🔔<span class="dot"></span></div>
       <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
     </div>
   </header>
@@ -71,15 +144,20 @@
           <h3><span class="bar"></span>型号列表</h3>
           <div class="tab-group">
             <div class="tab-item active">全部 12</div>
-            <div class="tab-item">JDF-200 系列</div>
-            <div class="tab-item">JDF-300 系列</div>
-            <div class="tab-item">JDF-500 系列</div>
+            <div class="tab-item">CWL系列（载冷剂机组）</div>
+            <div class="tab-item">CUL系列（压缩冷凝机组）</div>
+            <div class="tab-item">FCWZ系列</div>
             <div class="tab-item">配件</div>
+            <div class="tab-item">中低温型</div>
+            <div class="tab-item">JKL系列</div>
+            <div class="tab-item">ACW系列</div>
+            <div class="tab-item">CO2跨临界双机双级机组</div>
+            <div class="tab-item">ICW系列</div>
           </div>
         </div>
         <div class="toolbar">
           <input class="input-mini" placeholder="型号名称">
-          <select class="select-mini"><option>全部系列</option><option>JDF-200 系列</option><option>JDF-300 系列</option><option>JDF-500 系列</option><option>配件</option></select>
+          <select class="select-mini"><option>全部系列</option><option>CWL系列（载冷剂机组）</option><option>CUL系列（压缩冷凝机组）</option><option>FCWZ系列</option><option>SCWZ系列</option><option>SFCWZ系列</option><option>常温型</option><option>中低温型</option><option>JKL系列</option><option>ACW系列</option><option>CO2跨临界双机双级机组</option><option>ICW系列</option><option>配件</option></select>
           <select class="select-mini"><option>全部状态</option><option>在用</option><option>已停用</option></select>
           <button class="btn btn-primary btn-sm">🔍 查询</button>
           <button class="btn btn-ghost btn-sm">↺ 重置</button>
@@ -95,7 +173,7 @@
             <tr>
               <td class="cell-mono">MX001</td>
               <td class="cell-strong">JDF-200</td>
-              <td><span class="series-tag s200">JDF-200</span></td>
+              <td><span class="series-tag s200">CWL系列（载冷剂机组）</span></td>
               <td class="cell-num">15 kW</td>
               <td>R22</td>
               <td>4G + 有线</td>
@@ -107,7 +185,7 @@
             <tr>
               <td class="cell-mono">MX002</td>
               <td class="cell-strong">JDF-200S</td>
-              <td><span class="series-tag s200">JDF-200</span></td>
+              <td><span class="series-tag s200">CWL系列（载冷剂机组）</span></td>
               <td class="cell-num">18 kW</td>
               <td>R404A</td>
               <td>4G + 有线</td>
@@ -119,7 +197,7 @@
             <tr>
               <td class="cell-mono">MX003</td>
               <td class="cell-strong">JDF-300Pro</td>
-              <td><span class="series-tag s300">JDF-300</span></td>
+              <td><span class="series-tag s300">CUL系列（压缩冷凝机组）</span></td>
               <td class="cell-num">30 kW</td>
               <td>R404A</td>
               <td>4G + WiFi</td>
@@ -131,7 +209,7 @@
             <tr>
               <td class="cell-mono">MX004</td>
               <td class="cell-strong">JDF-300</td>
-              <td><span class="series-tag s300">JDF-300</span></td>
+              <td><span class="series-tag s300">CUL系列（压缩冷凝机组）</span></td>
               <td class="cell-num">25 kW</td>
               <td>R22</td>
               <td>4G</td>
@@ -143,7 +221,7 @@
             <tr>
               <td class="cell-mono">MX005</td>
               <td class="cell-strong">JDF-500</td>
-              <td><span class="series-tag s500">JDF-500</span></td>
+              <td><span class="series-tag s500">FCWZ系列</span></td>
               <td class="cell-num">55 kW</td>
               <td>R507A</td>
               <td>4G + WiFi + 有线</td>
@@ -155,7 +233,7 @@
             <tr>
               <td class="cell-mono">MX006</td>
               <td class="cell-strong">JDF-500L</td>
-              <td><span class="series-tag s500">JDF-500</span></td>
+              <td><span class="series-tag s500">FCWZ系列</span></td>
               <td class="cell-num">75 kW</td>
               <td>R507A</td>
               <td>4G + WiFi + 有线</td>
@@ -191,7 +269,19 @@
           </tbody>
         </table>
         <div class="pager">
-          <div class="info-txt">共 <b>12</b> 条</div>
+          <div class="pager-left">
+            <div class="info-txt">共 <b id="totalCount">12</b> 条</div>
+            <div class="page-size-wrap">
+              <label>每页</label>
+              <select class="select-mini" id="pageSizeSelect" onchange="changePageSize(this.value)">
+                <option value="10">10 条</option>
+                <option value="20">20 条</option>
+                <option value="50">50 条</option>
+                <option value="100">100 条</option>
+              </select>
+            </div>
+            <div class="page-current-info">，当前 <b id="currentPage">1</b>/<b id="totalPages">2</b> 页</div>
+          </div>
           <div class="page-nums"><span class="pn">‹</span><span class="pn active">1</span><span class="pn">2</span><span class="pn">›</span></div>
         </div>
       </div>
@@ -201,51 +291,94 @@
 
 <!-- ============ 新增型号抽屉 ============ -->
 <div class="drawer-mask" id="mask" onclick="closeDrawer()"></div>
-<aside class="d" id="drawer">
-  <div class="d-head">
-    <div style="min-width:0"><h2><span class="ic">＋</span>新增型号</h2><div class="sub">填写设备型号技术参数</div></div>
-    <button class="d-close" onclick="closeDrawer()">✕</button>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h2>新增型号<small>填写设备型号完整技术参数</small></h2>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
   </div>
-  <div class="d-body">
-    <div class="sec">
-      <div class="sec-head"><h4><span class="b"></span>基本信息</h4></div>
-      <div class="sec-body">
-        <div class="f-row">
-          <div class="f-item"><label>型号名称<span class="req">*</span></label><div class="f-ctrl"><input placeholder="如：JDF-300Pro"></div></div>
-          <div class="f-item"><label>所属系列<span class="req">*</span></label>
-            <div class="f-ctrl"><select><option>JDF-200 系列</option><option>JDF-300 系列</option><option>JDF-500 系列</option><option>配件</option></select></div></div>
+  <div class="drawer-body" style="padding:16px 20px">
+
+    <!-- 设备图片上传 -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;color:var(--text-dim);margin-bottom:8px;font-weight:600">设备图片</div>
+      <div id="imgUploadZone" onclick="document.getElementById('imgFileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--primary)';this.style.background='var(--primary-soft)'" ondragleave="this.style.borderColor='var(--line)';this.style.background='var(--glass)'" ondrop="event.preventDefault();this.style.borderColor='var(--line)';this.style.background='var(--glass)';var f=event.dataTransfer.files[0];if(f&&f.type.startsWith('image/')){document.getElementById('imgFileInput').files=event.dataTransfer.files;handleImgSelect(document.getElementById('imgFileInput'));}" style="border:2px dashed var(--line);border-radius:14px;padding:24px;text-align:center;cursor:pointer;transition:.2s;background:var(--glass)">
+        <div id="imgPreviewDefault" style="display:flex;flex-direction:column;align-items:center;gap:8px">
+          <div style="width:52px;height:52px;border-radius:12px;background:var(--primary-soft);display:flex;align-items:center;justify-content:center;font-size:24px">📷</div>
+          <div style="font-size:13px;color:var(--text-base);font-weight:600">点击上传设备图片</div>
+          <div style="font-size:11px;color:var(--text-faint)">支持 JPG、PNG，建议尺寸 800×600，支持拖拽</div>
         </div>
-        <div class="f-item"><label>型号描述</label>
-          <div class="f-ctrl"><textarea placeholder="简要描述型号特点、适用场景等"></textarea></div></div>
-      </div>
-    </div>
-    <div class="sec">
-      <div class="sec-head"><h4><span class="b"></span>技术参数</h4></div>
-      <div class="sec-body">
-        <div class="f-row" style="margin-bottom:14px">
-          <div class="f-item"><label>额定功率<span class="req">*</span></label><div class="f-ctrl" style="position:relative"><input type="number" placeholder="数值"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">kW</span></div></div>
-          <div class="f-item"><label>额定电压</label><div class="f-ctrl" style="position:relative"><input type="number" placeholder="数值"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">V</span></div></div>
-        </div>
-        <div class="f-row" style="margin-bottom:14px">
-          <div class="f-item"><label>制冷剂</label>
-            <div class="f-ctrl"><select><option>R22</option><option>R404A</option><option>R507A</option><option>R134a</option></select></div></div>
-          <div class="f-item"><label>通讯模块</label>
-            <div class="f-ctrl"><select><option>4G</option><option>4G + WiFi</option><option>4G + 有线</option><option>4G + WiFi + 有线</option><option>GPRS</option><option>RS485</option></select></div></div>
-        </div>
-        <div class="f-row">
-          <div class="f-item"><label>温控精度</label><div class="f-ctrl" style="position:relative"><input type="number" placeholder="数值"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">℃</span></div></div>
-          <div class="f-item"><label>外形尺寸 (长×宽×高)</label><div class="f-ctrl"><input placeholder="如：1200×800×1500 mm"></div></div>
+        <div id="imgPreviewArea" style="display:none;position:relative">
+          <img id="imgPreviewThumb" style="max-width:100%;max-height:200px;border-radius:10px;object-fit:contain" />
+          <div style="display:flex;gap:8px;justify-content:center;margin-top:10px">
+            <button type="button" onclick="event.stopPropagation();document.getElementById('imgFileInput').click()" style="padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--glass);color:var(--text-base);font-size:12px;cursor:pointer">🔄 更换图片</button>
+            <button type="button" onclick="event.stopPropagation();removeDeviceImg()" style="padding:6px 14px;border-radius:8px;border:1px solid rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:var(--err);font-size:12px;cursor:pointer">🗑 删除</button>
+          </div>
         </div>
       </div>
+      <input type="file" id="imgFileInput" accept="image/*" style="display:none" onchange="handleImgSelect(this)">
     </div>
-    <div class="sec">
-      <div class="sec-head"><h4><span class="b"></span>其他</h4></div>
-      <div class="sec-body">
-        <div class="f-item"><label>备注</label><div class="f-ctrl"><textarea placeholder="选填备注信息"></textarea></div></div>
+
+    <!-- 第一组：基本信息 -->
+    <div class="sec" style="margin-bottom:16px">
+      <div class="sec-head" style="margin-bottom:10px"><h4 style="font-size:13px;font-weight:700;color:var(--text-strong);display:flex;align-items:center;gap:8px"><span style="width:3px;height:14px;background:var(--primary);border-radius:2px;display:inline-block"></span>基本信息</h4></div>
+      <div class="sec-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">设备名称<span class="req">*</span></label><div class="f-ctrl"><input placeholder="如：工业用螺杆冷水机组"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">产品型号<span class="req">*</span></label><div class="f-ctrl"><input placeholder="如：ICW370"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">所属系列</label>
+          <div class="f-ctrl"><select><option value="">请选择</option><option>CWL系列（载冷剂机组）</option><option>CUL系列（压缩冷凝机组）</option><option>FCWZ系列</option><option>ICW系列</option><option>SCWZ系列</option><option>SFCWZ系列</option><option>常温型</option><option>配件</option><option>中低温型</option><option>JKL系列</option><option>ACW系列</option><option>CO2跨临界双机双级机组</option><option>其他</option></select></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">生产厂家</label><div class="f-ctrl"><input placeholder="如：南京久鼎环境科技股份有限公司"></div></div>
       </div>
     </div>
+
+    <!-- 第二组：制冷参数 -->
+    <div class="sec" style="margin-bottom:16px">
+      <div class="sec-head" style="margin-bottom:10px"><h4 style="font-size:13px;font-weight:700;color:var(--text-strong);display:flex;align-items:center;gap:8px"><span style="width:3px;height:14px;background:var(--primary-2);border-radius:2px;display:inline-block"></span>制冷参数</h4></div>
+      <div class="sec-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">制冷量 (kW)<span class="req">*</span></label><div class="f-ctrl"><input type="number" placeholder="如：336.5"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">总功率 (kW)<span class="req">*</span></label><div class="f-ctrl"><input type="number" placeholder="如：78.2"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">冷冻水温工况</label><div class="f-ctrl"><input placeholder="如：-10/-15℃ 或 7/12℃"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">性能系数 COP</label><div class="f-ctrl"><input placeholder="如：4.79 kW/kW"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">冷冻水流量 (m³/h)</label><div class="f-ctrl"><input type="number" placeholder="如：57.9"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">冷却水流量 (m³/h)</label><div class="f-ctrl"><input type="number" placeholder="如：71.4"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">载冷剂种类</label><div class="f-ctrl"><input placeholder="如：水 / 丙二醇水溶液 / 22%氯化钙溶液"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">制冷剂 / 充注量</label><div class="f-ctrl"><input placeholder="如：R22/60kg"></div></div>
+      </div>
+    </div>
+
+    <!-- 第三组：电气与物理参数 -->
+    <div class="sec" style="margin-bottom:16px">
+      <div class="sec-head" style="margin-bottom:10px"><h4 style="font-size:13px;font-weight:700;color:var(--text-strong);display:flex;align-items:center;gap:8px"><span style="width:3px;height:14px;background:var(--ok);border-radius:2px;display:inline-block"></span>电气与物理参数</h4></div>
+      <div class="sec-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">电源</label><div class="f-ctrl"><input placeholder="如：3N-380V-50Hz"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">机组运输重量 (kg)</label><div class="f-ctrl"><input type="number" placeholder="如：2215"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">机组净重 (kg)</label><div class="f-ctrl"><input type="number" placeholder="如：3200"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">机组运行重量 (kg)</label><div class="f-ctrl"><input type="number" placeholder="如：3860"></div></div>
+        <div class="f-item" style="grid-column:1/-1"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">外形尺寸 (长×宽×高 mm)</label><div class="f-ctrl"><input placeholder="如：3200×1180×2300 mm"></div></div>
+      </div>
+    </div>
+
+    <!-- 第四组：出厂信息 -->
+    <div class="sec" style="margin-bottom:16px">
+      <div class="sec-head" style="margin-bottom:10px"><h4 style="font-size:13px;font-weight:700;color:var(--text-strong);display:flex;align-items:center;gap:8px"><span style="width:3px;height:14px;background:var(--warn);border-radius:2px;display:inline-block"></span>出厂信息</h4></div>
+      <div class="sec-body" style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">投产单号</label><div class="f-ctrl"><input placeholder="如：JD260402-3"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">出厂编号</label><div class="f-ctrl"><input placeholder="如：2605A52"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">出厂日期</label><div class="f-ctrl"><input type="month" placeholder="如：2026-05"></div></div>
+        <div class="f-item"><label style="font-size:12px;color:var(--text-dim);margin-bottom:4px;display:block">通讯方式</label>
+          <div class="f-ctrl"><select><option value="">请选择</option><option>4G</option><option>4G + 有线</option><option>4G + WiFi</option><option>4G + WiFi + 有线</option><option>GPRS</option><option>RS485</option><option>NB-IoT</option></select></div></div>
+      </div>
+    </div>
+
+    <!-- 备注 -->
+    <div class="sec">
+      <div class="sec-head" style="margin-bottom:10px"><h4 style="font-size:13px;font-weight:700;color:var(--text-strong);display:flex;align-items:center;gap:8px"><span style="width:3px;height:14px;background:var(--text-faint);border-radius:2px;display:inline-block"></span>备注</h4></div>
+      <div class="sec-body">
+        <div class="f-item"><textarea style="width:100%;min-height:72px;resize:vertical;background:var(--glass);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text-base);font-family:inherit;box-sizing:border-box" placeholder="选填，可补充特殊说明、适用场景、备件信息等"></textarea></div>
+      </div>
+    </div>
+
   </div>
-  <div class="d-foot">
+  <div style="padding:16px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end">
     <button class="btn btn-ghost" onclick="closeDrawer()">取消</button>
     <button class="btn btn-ghost">存草稿</button>
     <button class="btn btn-primary">✓ 保存型号</button>
@@ -253,9 +386,199 @@
 </aside>
 
 <script>
+
+function changePageSize(size){
+  var total = 12;
+  var totalPages = Math.ceil(total / size);
+  document.getElementById('totalPages').textContent = totalPages.toLocaleString();
+  document.getElementById('totalCount').textContent = total.toLocaleString();
+  var pnContainer = document.querySelector('.page-nums');
+  var currentPage = 1;
+  var pages = [];
+  if(totalPages <= 7){
+    for(var i=1;i<=totalPages;i++) pages.push(i);
+  } else {
+    if(currentPage <= 4){for(var i=1;i<=5;i++) pages.push(i); pages.push("..."); pages.push(totalPages);}
+    else if(currentPage >= totalPages-3){pages.push(1); pages.push("..."); for(var i=totalPages-4;i<=totalPages;i++) pages.push(i);}
+    else{pages.push(1); pages.push("..."); for(var i=currentPage-1;i<=currentPage+1;i++) pages.push(i); pages.push("..."); pages.push(totalPages);}
+  }
+  var html = '<span class="pn">‹</span>';
+  pages.forEach(function(p){
+    if(p==="...") html += '<span class="pn">'+p+'</span>';
+    else html += '<span class="pn'+(p===currentPage?' active':'')+'">'+p+'</span>';
+  });
+  html += '<span class="pn">›</span>';
+  pnContainer.innerHTML = html;
+  document.getElementById('currentPage').textContent = '1';
+  document.getElementById('totalPages').textContent = totalPages.toLocaleString();
+}
 function openDrawer(){document.getElementById('mask').classList.add('open');document.getElementById('drawer').classList.add('open')}
 function closeDrawer(){document.getElementById('mask').classList.remove('open');document.getElementById('drawer').classList.remove('open')}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});
+
+function openNotif(){
+  document.getElementById('notifMask').classList.add('open');
+  document.getElementById('notifDrawer').classList.add('open');
+}
+function closeNotif(){
+  document.getElementById('notifMask').classList.remove('open');
+  document.getElementById('notifDrawer').classList.remove('open');
+}
+function markAllRead(){
+  document.querySelectorAll('.notif-item.unread').forEach(function(el){
+    el.classList.remove('unread');
+    var dot = el.querySelector('.notif-unread-dot');
+    if(dot) dot.remove();
+  });
+  var badge = document.getElementById('notifBadge');
+  if(badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+  var bellDot = document.querySelector('.icon-btn[onclick*="openNotif"] .dot');
+  if(bellDot) bellDot.style.display = 'none';
+}
+function switchNotifTab(el){
+  document.querySelectorAll('.notif-tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  var tab = el.getAttribute('data-tab');
+  document.querySelectorAll('.notif-item').forEach(function(item){
+    item.style.display = (tab==='all' || item.getAttribute('data-type')===tab) ? 'flex' : 'none';
+  });
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeNotif();}});
+
+
+var THEMES=[
+  {id:'fluent',name:'Fluent 毛玻璃',desc:'浅色 Acrylic 材质，干净现代，长时间使用不累眼',dots:['#eef1f8','#0ea5e9','#8b5cf6'],grad:'linear-gradient(135deg,#eef1f8,#dbeafe)'},
+  {id:'aurora',name:'极光玻璃',desc:'午夜紫蓝底 + 紫青极光流光，优雅梦幻高端 SaaS',dots:['#0a0e27','#a855f7','#06b6d4'],grad:'linear-gradient(135deg,#0a0e27,#2d1b4e)'},
+  {id:'deep',name:'深空科技',desc:'深蓝黑底 + 霓虹青辉光，冷峻专业工业监控风',dots:['#06172d','#00e6ff','#2f6dff'],grad:'linear-gradient(135deg,#06172d,#0a2a4a)'},
+  {id:'mineral',name:'矿物青',desc:'墨青底 + 矿物青调，沉稳工业感，适合化工能源',dots:['#0a1a1f','#14b8a6','#0ea5e9'],grad:'linear-gradient(135deg,#0a1a1f,#0e3338)'}
+];
+var THEME_LABEL={fluent:'FLUENT',aurora:'AURORA',deep:'DEEP SPACE',mineral:'MINERAL'};
+(function(){
+  var list=document.getElementById('themeList');
+  if(!list) return;
+  THEMES.forEach(function(t){
+    var dotsHtml=t.dots.map(function(c){return '<span style="background:'+c+'"></span>'}).join('');
+    var card=document.createElement('div');
+    card.className='theme-card'+(document.body.dataset.theme===t.id?' active':'');
+    card.dataset.id=t.id;
+    card.innerHTML='<div class="theme-swatch" style="background:'+t.grad+'"></div><div class="theme-info"><b>'+t.name+'</b><p>'+t.desc+'</p><div class="theme-dots">'+dotsHtml+'</div></div>';
+    card.onclick=function(){switchTheme(t.id)};
+    list.appendChild(card);
+  });
+  function switchTheme(id){
+    document.body.dataset.theme=id;
+    document.querySelectorAll('.theme-card').forEach(function(c){c.classList.toggle('active',c.dataset.id===id)});
+  }
+  window.switchTheme=switchTheme;
+})();
+function openDrawer(){document.getElementById('mask').classList.add('open');document.getElementById('drawer').classList.add('open')}
+function closeDrawer(){
+  document.getElementById('mask').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  closeThemeDrawer();
+}
+function openThemeDrawer(){document.getElementById('themeMask').classList.add('open');document.getElementById('themeDrawer').classList.add('open')}
+function closeThemeDrawer(){document.getElementById('themeMask').classList.remove('open');document.getElementById('themeDrawer').classList.remove('open')}
+function handleImgSelect(input){
+  if(input.files&&input.files[0]){
+    var f=input.files[0];
+    if(f.size>10*1024*1024){alert('图片大小不能超过10MB');return;}
+    var r=new FileReader();
+    r.onload=function(e2){document.getElementById('imgPreviewThumb').src=e2.target.result;document.getElementById('imgPreviewDefault').style.display='none';document.getElementById('imgPreviewArea').style.display='block';};
+    r.readAsDataURL(f);
+  }
+}
+function removeDeviceImg(){
+  document.getElementById('imgFileInput').value='';
+  document.getElementById('imgPreviewThumb').src='';
+  document.getElementById('imgPreviewArea').style.display='none';
+  document.getElementById('imgPreviewDefault').style.display='flex';
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeDrawer();}});
+
 </script>
+
+<!-- ============ 通知抽屉 ============ -->
+<div class="notif-mask" id="notifMask" onclick="closeNotif()"></div>
+<aside class="notif-drawer" id="notifDrawer">
+  <div class="notif-head">
+    <div class="notif-title"><h2>通知中心</h2><span class="notif-badge" id="notifBadge">3</span></div>
+    <div class="notif-actions">
+      <button class="notif-markread" onclick="markAllRead()">全部已读</button>
+      <button class="notif-close" onclick="closeNotif()">✕</button>
+    </div>
+  </div>
+  <div class="notif-tabs">
+    <span class="notif-tab active" data-tab="all" onclick="switchNotifTab(this)">全部</span>
+    <span class="notif-tab" data-tab="alarm" onclick="switchNotifTab(this)">设备报警</span>
+    <span class="notif-tab" data-tab="order" onclick="switchNotifTab(this)">工单提醒</span>
+    <span class="notif-tab" data-tab="sys" onclick="switchNotifTab(this)">系统通知</span>
+  </div>
+  <div class="notif-list" id="notifList">
+    <div class="notif-item unread" data-type="alarm">
+      <div class="notif-icon alarm">⚠</div>
+      <div class="notif-body">
+        <div class="notif-msg"><b>制冷主机A</b> 排气压力异常偏高（1.62MPa），超过阈值1.50MPa，已自动停机保护</div>
+        <div class="notif-meta"><span class="notif-time">06-20 14:22</span><span class="notif-device">220112521</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item unread" data-type="alarm">
+      <div class="notif-icon warn">🌡</div>
+      <div class="notif-body">
+        <div class="notif-msg"><b>制冷主机B</b> 排气温度偏高 75.2℃，持续8分钟后自行恢复</div>
+        <div class="notif-meta"><span class="notif-time">06-18 09:15</span><span class="notif-device">220112522</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item unread" data-type="order">
+      <div class="notif-icon order">📋</div>
+      <div class="notif-body">
+        <div class="notif-msg">工单 <b>#GD20260615</b> 已派发，等待工程师接单处理</div>
+        <div class="notif-meta"><span class="notif-time">06-22 10:05</span><span class="notif-tag">工单</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item" data-type="order">
+      <div class="notif-icon ok">✓</div>
+      <div class="notif-body">
+        <div class="notif-msg">工单 <b>#GD20260502</b> 保养任务已完工，更换润滑油 + 滤芯</div>
+        <div class="notif-meta"><span class="notif-time">06-15 16:40</span><span class="notif-tag">工单</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="alarm">
+      <div class="notif-icon sys">📡</div>
+      <div class="notif-body">
+        <div class="notif-msg">设备 <b>220112523</b> 通讯中断12分钟，NB-IoT信号弱，自动重连成功</div>
+        <div class="notif-meta"><span class="notif-time">04-28 02:11</span><span class="notif-device">220112523</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="sys">
+      <div class="notif-icon sys">📈</div>
+      <div class="notif-body">
+        <div class="notif-msg">系统已于 <b>04-12 23:50</b> 完成固件升级，v3.1.0 → v3.2.1</div>
+        <div class="notif-meta"><span class="notif-time">04-12 23:50</span><span class="notif-tag">系统</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="sys">
+      <div class="notif-icon sys">🔔</div>
+      <div class="notif-body">
+        <div class="notif-msg">设备 <b>220112518</b> 维保合同将于 <b>30天后</b>（2026-07-24）到期，请及时续保</div>
+        <div class="notif-meta"><span class="notif-time">昨天 08:00</span><span class="notif-tag">维保</span></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ============ 主题切换抽屉 ============ -->
+<div class="drawer-mask" id="themeMask" onclick="closeThemeDrawer()"></div>
+<aside class="drawer" id="themeDrawer">
+  <div class="drawer-head">
+    <h2>切换界面风格<small>为客户选择喜欢的样式，点击即时预览</small></h2>
+    <button class="drawer-close" onclick="closeThemeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="themeList"></div>
+</aside>
+
 </body>
 </html>

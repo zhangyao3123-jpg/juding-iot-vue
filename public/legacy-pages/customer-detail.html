@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>客户详情 · 久鼎物联网售后管理系统</title>
+<style>
+/* Fluent 毛玻璃主题 - 客户详情页（与全站共享 token） */
+:root{
+  --bg-base:#eef1f8;
+  --primary:#0ea5e9; --primary-2:#8b5cf6;
+  --primary-soft:rgba(14,165,233,.12); --primary2-soft:rgba(139,92,246,.12);
+  --text-strong:#0f172a; --text-base:#334155; --text-dim:#64748b; --text-faint:#94a3b8;
+  --glass:rgba(255,255,255,.62); --glass-hover:rgba(255,255,255,.78);
+  --line:rgba(15,23,42,.08); --line-soft:rgba(15,23,42,.05);
+  --ok:#10b981; --warn:#f59e0b; --err:#ef4444;
+  --shadow-sm:0 1px 3px rgba(15,23,42,.06);
+  --shadow-md:0 8px 24px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.04);
+  --shadow-lg:0 18px 48px rgba(79,70,229,.12),0 6px 14px rgba(15,23,42,.06);
+  /* 字号阶梯 */
+  --fs-display:30px; --fs-h1:20px; --fs-h2:16px; --fs-h3:14px;
+  --fs-body:13px; --fs-sm:12px; --fs-xs:11px; --fs-xxs:10px;
+  --lh-tight:1.15; --lh-base:1.5; --lh-snug:1.3;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px;
+  --radius:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Segoe UI Variable","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color:var(--text-base);background:var(--bg-base);overflow:hidden;-webkit-font-smoothing:antialiased;
+  font-size:var(--fs-body);line-height:var(--lh-base)}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:linear-gradient(135deg,#eef1f8 0%,#e9edf6 50%,#f0eef8 100%)}
+.bg .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 22s ease-in-out infinite}
+.bg .b1{width:560px;height:560px;left:-140px;top:-100px;background:radial-gradient(circle,rgba(14,165,233,.5),transparent 70%)}
+.bg .b2{width:520px;height:520px;right:-120px;top:80px;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%);animation-delay:-7s}
+.bg .b3{width:620px;height:400px;left:30%;bottom:-180px;background:radial-gradient(circle,rgba(99,102,241,.4),transparent 70%);animation-delay:-14s}
+.bg .grid{position:absolute;inset:0;opacity:.4;background-image:linear-gradient(rgba(15,23,42,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,.025) 1px,transparent 1px);background-size:44px 44px}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.06)}66%{transform:translate(-30px,40px) scale(.96)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh}
+.topbar{flex:none;height:66px;display:flex;align-items:center;padding:0 22px;gap:18px;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(30px) saturate(1.6);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;min-width:240px}
+.brand .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px;
+  box-shadow:0 8px 20px rgba(14,165,233,.35)}
+.brand .name b{display:block;font-size:var(--fs-h3);color:var(--text-strong);letter-spacing:.3px;line-height:1.15}
+.brand .name small{font-size:var(--fs-xxs);color:var(--text-dim);letter-spacing:2px}
+.search{flex:1;max-width:380px;position:relative}
+.search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--line);border-radius:11px;
+  background:rgba(255,255,255,.7);color:var(--text-base);font-size:var(--fs-body);outline:none;transition:.2s}
+.search input::placeholder{color:var(--text-faint)}
+.search input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-soft);background:#fff}
+.search .ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-faint)}
+.topbar .spacer{flex:1}
+.top-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.5);
+  color:var(--text-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:.2s}
+.icon-btn:hover{color:var(--primary);background:var(--glass-hover);box-shadow:var(--shadow-sm)}
+.user{display:flex;align-items:center;gap:10px;padding:5px 14px 5px 6px;border-radius:30px;border:1px solid var(--line);
+  background:rgba(255,255,255,.55);cursor:pointer;transition:.2s}
+.user:hover{background:var(--glass-hover);box-shadow:var(--shadow-sm)}
+.user .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary-2),var(--primary));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.user .uname{font-size:var(--fs-body);color:var(--text-strong);line-height:1.1}
+.user .urole{font-size:var(--fs-xxs);color:var(--text-dim)}
+
+.body{flex:1;display:flex;min-height:0}
+.sidebar{flex:none;width:234px;background:rgba(255,255,255,.45);backdrop-filter:blur(28px) saturate(1.5);
+  border-right:1px solid var(--line);padding:16px 12px;overflow-y:auto}
+.nav-group-title{font-size:var(--fs-xxs);color:var(--text-faint);letter-spacing:2px;padding:14px 12px 8px;text-transform:uppercase;font-weight:700}
+.nav-item a{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:11px;color:var(--text-dim);
+  font-size:13.5px;text-decoration:none;margin-bottom:2px;transition:.18s;font-weight:500}
+.nav-item a:hover{background:rgba(255,255,255,.7);color:var(--text-base);box-shadow:var(--shadow-sm)}
+.nav-item.active a{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  box-shadow:0 8px 20px rgba(14,165,233,.32)}
+.nav-item .badge{margin-left:auto;background:var(--err);color:#fff;font-size:var(--fs-xxs);padding:1px 7px;border-radius:10px;font-weight:700}
+.nav-item .ico{width:18px;text-align:center}
+
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+.crumb{font-size:var(--fs-sm);color:var(--text-dim);display:flex;align-items:center;gap:6px;margin-bottom:18px}
+.crumb a{color:var(--primary);text-decoration:none;font-weight:500}
+.crumb a:hover{text-decoration:underline}
+.crumb .sep{color:var(--text-faint)}
+.crumb b{color:var(--text-strong);font-weight:600}
+.btn{height:36px;padding:0 15px;border-radius:10px;border:none;cursor:pointer;font-size:var(--fs-body);font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;box-shadow:0 6px 18px rgba(14,165,233,.3)}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.6);border:1px solid var(--line);color:var(--text-dim)}
+.btn-ghost:hover{color:var(--primary);border-color:var(--primary);background:#fff}
+.btn-sm{height:30px;padding:0 11px;font-size:var(--fs-sm);border-radius:8px}
+.crumb-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.crumb-actions{display:flex;gap:8px}
+
+/* 概览统计 */
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.mini-stat{padding:var(--sp-4);border-radius:var(--radius);background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(20px) saturate(1.4);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:13px;transition:.2s}
+.mini-stat:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.mini-stat .mi{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}
+.mini-stat .mt{font-size:var(--fs-xs);color:var(--text-dim);font-weight:500}
+.mini-stat .mv{font-size:var(--fs-h1);font-weight:800;color:var(--text-strong);letter-spacing:-.3px;line-height:1.1}
+
+/* 双栏：基本信息 + 联系人 */
+.dual{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-bottom:20px}
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(20px) saturate(1.4);
+  box-shadow:var(--shadow-md);overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:var(--sp-4) var(--sp-5);border-bottom:1px solid var(--line-soft)}
+.panel-head h3{font-size:var(--fs-h2);color:var(--text-strong);display:flex;align-items:center;gap:9px;font-weight:600;line-height:var(--lh-tight)}
+.panel-head h3 .bar{width:4px;height:15px;border-radius:3px;background:linear-gradient(180deg,var(--primary),var(--primary-2))}
+.panel-body{padding:var(--sp-4) var(--sp-5)}
+.kv-table{width:100%}
+.kv-table tr td{padding:11px 0;font-size:var(--fs-body);border-bottom:1px solid var(--line-soft);line-height:var(--lh-snug)}
+.kv-table tr td:first-child{color:var(--text-dim);width:34%}
+.kv-table tr td:last-child{color:var(--text-strong);font-weight:600}
+.kv-table tr:last-child td{border-bottom:none}
+.kv-table .mono{font-family:"Consolas",monospace;color:var(--primary-2)}
+
+/* 联系人卡 */
+.contact-card{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3);border-radius:11px;transition:.18s;margin-bottom:var(--sp-2)}
+.contact-card:hover{background:rgba(14,165,233,.05)}
+.contact-card .ava{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:15px;flex:none}
+.contact-card .ci b{display:block;font-size:var(--fs-body);color:var(--text-strong);font-weight:600;line-height:var(--lh-snug)}
+.contact-card .ci small{font-size:var(--fs-xs);color:var(--text-dim);line-height:var(--lh-base)}
+.contact-card .cphone{margin-left:auto;font-size:var(--fs-sm);color:var(--primary);font-family:"Consolas",monospace}
+
+/* 客户头部卡（Logo + 图片） */
+.cust-hero{display:flex;align-items:stretch;gap:var(--sp-4);margin-bottom:var(--sp-5);
+  border-radius:16px;border:1px solid var(--line);background:var(--glass);backdrop-filter:blur(20px) saturate(1.4);
+  box-shadow:var(--shadow-md);padding:var(--sp-5);overflow:hidden;position:relative}
+.cust-hero::before{content:"";position:absolute;right:-50px;top:-50px;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle,rgba(14,165,233,.14),transparent 70%)}
+.cust-hero .ch-left{display:flex;align-items:center;gap:var(--sp-4);flex:none;position:relative;z-index:1}
+.cust-hero .ch-logo{width:84px;height:84px;border-radius:18px;flex:none;overflow:hidden;
+  background:linear-gradient(135deg,#dbeafe,#e0e7ff);display:flex;align-items:center;justify-content:center;
+  font-size:34px;font-weight:800;color:#fff;box-shadow:var(--shadow-md);
+  border:3px solid rgba(255,255,255,.8)}
+.cust-hero .ch-logo img{width:100%;height:100%;object-fit:cover}
+.cust-hero .ch-info h1{font-size:var(--fs-h1);color:var(--text-strong);font-weight:700;line-height:var(--lh-tight)}
+.cust-hero .ch-info .ch-code{font-family:"Consolas",monospace;font-size:var(--fs-sm);color:var(--primary-2);
+  font-weight:600;background:var(--primary2-soft);padding:3px 9px;border-radius:7px;display:inline-block;margin-top:var(--sp-2)}
+.cust-hero .ch-info .ch-tags{display:flex;gap:var(--sp-2);margin-top:var(--sp-2);flex-wrap:wrap}
+.cust-hero .ch-pics{flex:1;display:flex;gap:var(--sp-2);align-items:center;justify-content:flex-end;position:relative;z-index:1;min-width:0;overflow-x:auto;padding-bottom:2px}
+.cust-hero .ch-pics .ph{flex:none;width:96px;height:72px;border-radius:11px;overflow:hidden;cursor:pointer;
+  background:linear-gradient(135deg,#f1f5f9,#e2e8f0);box-shadow:var(--shadow-sm);transition:.2s;position:relative;
+  display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--text-faint)}
+.cust-hero .ch-pics .ph:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.cust-hero .ch-pics .ph img{width:100%;height:100%;object-fit:cover}
+.cust-hero .ch-pics .ph .more{position:absolute;inset:0;background:rgba(15,23,42,.6);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:var(--fs-sm);font-weight:700}
+
+/* 图片预览弹层 */
+.img-viewer{position:fixed;inset:0;background:rgba(5,8,20,.85);backdrop-filter:blur(6px);z-index:200;
+  display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:.25s}
+.img-viewer.open{opacity:1;visibility:visible}
+.img-viewer img{max-width:86%;max-height:82%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.img-viewer .iv-close{position:absolute;top:24px;right:30px;width:40px;height:40px;border-radius:11px;
+  border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#fff;font-size:18px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:.2s}
+.img-viewer .iv-close:hover{background:rgba(239,68,68,.8)}
+
+/* 设备列表 */
+.dev-list-row{display:grid;grid-template-columns:1fr 110px 110px 120px 90px;gap:var(--sp-3);align-items:center;
+  padding:12px var(--sp-5);border-bottom:1px solid var(--line-soft);font-size:var(--fs-body);transition:.15s}
+.dev-list-row:hover{background:rgba(14,165,233,.04)}
+.dev-list-row:last-child{border-bottom:none}
+.dev-list-row .name b{color:var(--text-strong);font-weight:600;line-height:var(--lh-snug)}
+.dev-list-row .name small{display:block;font-size:var(--fs-xs);color:var(--text-faint);font-family:"Consolas",monospace}
+.dev-list-row .val{color:var(--text-base);font-variant-numeric:tabular-nums}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-xs);padding:3px 10px;border-radius:20px;font-weight:600}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok{background:rgba(16,185,129,.14);color:var(--ok)} .pill.ok::before{animation:pulse 1.5s infinite}
+.pill.warn{background:rgba(245,158,11,.14);color:var(--warn)}
+.pill.off{background:rgba(100,116,139,.14);color:var(--text-dim)}
+.btn-link{background:none;border:none;color:var(--primary);font-size:var(--fs-xs);font-weight:600;cursor:pointer;padding:4px 8px;border-radius:7px;transition:.15s}
+.btn-link:hover{background:var(--primary-soft)}
+.list-head{display:grid;grid-template-columns:1fr 110px 110px 120px 90px;gap:var(--sp-3);padding:11px var(--sp-5);
+  font-size:var(--fs-xs);color:var(--text-faint);font-weight:600;border-bottom:1px solid var(--line)}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(100,116,139,.25);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div>
+    </div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索客户、设备、工单…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="通知">🔔<span style="position:absolute;top:8px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--err);border:2px solid rgba(255,255,255,.9)"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><a href="demo-hub.html"><span class="ico">📊</span>数据概览</a></div>
+      <div class="nav-item"><a href="device-list.html"><span class="ico">🖥</span>设备监控<span class="badge">3</span></a></div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item"><a href="order-list.html"><span class="ico">📋</span>工单管理<span class="badge">12</span></a></div>
+      <div class="nav-item"><a href="repair-list.html"><span class="ico">🔧</span>维修记录</a></div>
+      <div class="nav-item"><a href="callback-list.html"><span class="ico">📞</span>客户回访</a></div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item active"><a href="customer-list.html"><span class="ico">👥</span>客户档案</a></div>
+      <div class="nav-item"><a href="device-model.html"><span class="ico">⚙</span>设备型号</a></div>
+      <div class="nav-item"><a href="report-page.html"><span class="ico">📈</span>统计报表</a></div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item"><a href="system-settings.html"><span class="ico">🛠</span>系统设置</a></div>
+    </aside>
+
+    <main class="content">
+      <div class="crumb-row">
+        <div class="crumb">
+          <a href="customer-list.html">客户档案</a>
+          <span class="sep">/</span>
+          <b>甘肃泰友生物科技</b>
+        </div>
+        <div class="crumb-actions">
+          <button class="btn btn-ghost btn-sm">✎ 编辑信息</button>
+          <button class="btn btn-primary btn-sm">📞 发起回访</button>
+        </div>
+      </div>
+
+      <!-- 客户头部：Logo + 公司图片 -->
+      <div class="cust-hero">
+        <div class="ch-left">
+          <div class="ch-logo">
+            <img src="https://images.unsplash.com/photo-1565043666747-69f6646db940?auto=format&fit=crop&w=200&q=80" alt="公司Logo" id="custLogo">
+          </div>
+          <div class="ch-info">
+            <h1>甘肃泰友生物科技</h1>
+            <span class="ch-code">CUST-2024-0518</span>
+            <div class="ch-tags">
+              <span class="pill info">企业客户 · VIP</span>
+              <span class="pill ok">合作中</span>
+              <span class="pill warn">生物医药 · 冷链</span>
+            </div>
+          </div>
+        </div>
+        <div class="ch-pics" id="custPics">
+          <div class="ph" onclick="viewImg(this)"><img src="https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&w=400&q=80" alt="厂区大门"></div>
+          <div class="ph" onclick="viewImg(this)"><img src="https://images.unsplash.com/photo-1565008447742-97f6f38c985c?auto=format&fit=crop&w=400&q=80" alt="生产车间"></div>
+          <div class="ph" onclick="viewImg(this)"><img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=400&q=80" alt="厂房外景"></div>
+          <div class="ph" onclick="viewImg(this)"><img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=400&q=80" alt="车间设备"></div>
+          <div class="ph more" onclick="alert('共 5 张图片，可在客户档案中管理')">+1</div>
+        </div>
+      </div>
+
+      <!-- 概览 -->
+      <div class="mini-stats">
+        <div class="mini-stat">
+          <div class="mi" style="background:rgba(14,165,233,.12);color:#0ea5e9">🖥</div>
+          <div><div class="mt">关联设备</div><div class="mv">6</div></div>
+        </div>
+        <div class="mini-stat">
+          <div class="mi" style="background:rgba(16,185,129,.12);color:#10b981">✓</div>
+          <div><div class="mt">在线设备</div><div class="mv">5</div></div>
+        </div>
+        <div class="mini-stat">
+          <div class="mi" style="background:rgba(245,158,11,.12);color:#f59e0b">📋</div>
+          <div><div class="mt">待处理工单</div><div class="mv">2</div></div>
+        </div>
+        <div class="mini-stat">
+          <div class="mi" style="background:rgba(139,92,246,.12);color:#8b5cf6">📅</div>
+          <div><div class="mt">合作年限</div><div class="mv">2.3 年</div></div>
+        </div>
+      </div>
+
+      <!-- 基本信息 + 联系人 -->
+      <div class="dual">
+        <div class="panel">
+          <div class="panel-head"><h3><span class="bar"></span>客户基本信息</h3></div>
+          <div class="panel-body">
+            <table class="kv-table">
+              <tr><td>客户名称</td><td>甘肃泰友生物科技</td></tr>
+              <tr><td>客户编号</td><td class="mono">CUST-2024-0518</td></tr>
+              <tr><td>客户类型</td><td>企业客户 · VIP</td></tr>
+              <tr><td>所属行业</td><td>生物医药 · 冷链</td></tr>
+              <tr><td>所在地区</td><td>甘肃省 · 兰州市</td></tr>
+              <tr><td>详细地址</td><td>兰州市城关区科技产业园 3 号厂房</td></tr>
+              <tr><td>开户时间</td><td>2024-08-15</td></tr>
+              <tr><td>客户经理</td><td>李主管</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3><span class="bar"></span>联系人</h3></div>
+          <div class="panel-body">
+            <div class="contact-card">
+              <div class="ava">张</div>
+              <div class="ci"><b>张经理</b><small>设备主管 · 主要联系人</small></div>
+              <div class="cphone">139-1234-5678</div>
+            </div>
+            <div class="contact-card">
+              <div class="ava">王</div>
+              <div class="ci"><b>王工</b><small>运维工程师</small></div>
+              <div class="cphone">138-2345-6789</div>
+            </div>
+            <div class="contact-card">
+              <div class="ava">陈</div>
+              <div class="ci"><b>陈财务</b><small>结算对接</small></div>
+              <div class="cphone">137-3456-7890</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 关联设备 -->
+      <div class="panel">
+        <div class="panel-head">
+          <h3><span class="bar"></span>关联设备</h3>
+          <span style="font-size:var(--fs-xs);color:var(--text-dim)">共 6 台</span>
+        </div>
+        <div class="list-head">
+          <span>设备名称 / 编码</span><span>型号</span><span>状态</span><span>最后上报</span><span>操作</span>
+        </div>
+        <div class="dev-list-row">
+          <div class="name"><b>制冷主机A</b><small>220112521</small></div>
+          <span class="val">ZFFCW-300Pro</span>
+          <span><span class="pill ok">在线</span></span>
+          <span class="val">2026-06-22 10:41</span>
+          <button class="btn-link" onclick="location.href='device-detail.html'">查看详情 ↗</button>
+        </div>
+        <div class="dev-list-row">
+          <div class="name"><b>制冷主机B</b><small>220112522</small></div>
+          <span class="val">ZFFCW-300Pro</span>
+          <span><span class="pill ok">在线</span></span>
+          <span class="val">2026-06-22 10:40</span>
+          <button class="btn-link">查看详情 ↗</button>
+        </div>
+        <div class="dev-list-row">
+          <div class="name"><b>冷库控制柜1</b><small>220112530</small></div>
+          <span class="val">JD-CK200</span>
+          <span><span class="pill warn">告警</span></span>
+          <span class="val">2026-06-22 09:18</span>
+          <button class="btn-link">查看详情 ↗</button>
+        </div>
+        <div class="dev-list-row">
+          <div class="name"><b>冷库控制柜2</b><small>220112531</small></div>
+          <span class="val">JD-CK200</span>
+          <span><span class="pill ok">在线</span></span>
+          <span class="val">2026-06-22 10:39</span>
+          <button class="btn-link">查看详情 ↗</button>
+        </div>
+        <div class="dev-list-row">
+          <div class="name"><b>压缩机组 C</b><small>220112540</small></div>
+          <span class="val">ZYS-150</span>
+          <span><span class="pill off">离线</span></span>
+          <span class="val">2026-06-20 22:05</span>
+          <button class="btn-link">查看详情 ↗</button>
+        </div>
+        <div class="dev-list-row">
+          <div class="name"><b>冷却塔风机</b><small>220112550</small></div>
+          <span class="val">JD-FN90</span>
+          <span><span class="pill ok">在线</span></span>
+          <span class="val">2026-06-22 10:41</span>
+          <button class="btn-link">查看详情 ↗</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- 图片预览弹层 -->
+<div class="img-viewer" id="imgViewer" onclick="closeImg()">
+  <button class="iv-close">✕</button>
+  <img id="ivImg" src="" alt="预览">
+</div>
+
+<script>
+function viewImg(ph){
+  var img = ph.querySelector('img');
+  if(!img || !img.src) return;
+  document.getElementById('ivImg').src = img.src;
+  document.getElementById('imgViewer').classList.add('open');
+}
+function closeImg(){
+  document.getElementById('imgViewer').classList.remove('open');
+}
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') closeImg();
+});
+</script>
+</body>
+</html>

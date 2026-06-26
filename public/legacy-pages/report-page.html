@@ -43,9 +43,150 @@
 .perf-rate .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--ok),var(--primary))}
 .perf-rate .pct{font-size:12px;font-weight:600;color:var(--text-strong);font-variant-numeric:tabular-nums;min-width:36px}
 .score-stars{color:var(--warn);font-size:13px;letter-spacing:1px}
+
+/* ========== 通知抽屉 ========== */
+.notif-mask{position:fixed;inset:0;background:rgba(5,8,20,.5);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.notif-mask.open{opacity:1;visibility:visible}
+.notif-drawer{position:fixed;top:0;right:0;bottom:0;width:400px;z-index:101;background:var(--bg-base);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)}
+.notif-drawer.open{transform:translateX(0)}
+.notif-head{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px;border-bottom:1px solid var(--line)}
+.notif-title{display:flex;align-items:center;gap:10px}
+.notif-title h2{font-size:17px;color:var(--text-strong);font-weight:700}
+.notif-badge{min-width:20px;height:20px;background:var(--err);color:#fff;font-size:11px;font-weight:700;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.notif-actions{display:flex;align-items:center;gap:8px}
+.notif-markread{background:none;border:none;color:var(--primary);font-size:12.5px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:7px;transition:.18s}
+.notif-markread:hover{background:var(--primary-soft)}
+.notif-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.5);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.18s}
+.notif-close:hover{color:var(--text-strong);background:var(--glass-hover)}
+.notif-tabs{display:flex;gap:4px;padding:12px 16px;border-bottom:1px solid var(--line-soft)}
+.notif-tab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;transition:.18s}
+.notif-tab:hover{color:var(--text-base)}
+.notif-tab.active{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.notif-list{flex:1;overflow-y:auto;padding:8px 8px}
+.notif-item{display:flex;gap:12px;padding:14px 14px;border-radius:12px;cursor:pointer;transition:.18s;position:relative;align-items:flex-start}
+.notif-item:hover{background:var(--glass-hover)}
+.notif-item.unread{background:rgba(14,165,233,.04)}
+.notif-item.unread:hover{background:rgba(14,165,233,.08)}
+.notif-icon{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.notif-icon.alarm{background:rgba(239,68,68,.13);color:var(--err)}
+.notif-icon.warn{background:rgba(245,158,11,.15);color:var(--warn)}
+.notif-icon.order{background:var(--primary-soft);color:var(--primary)}
+.notif-icon.ok{background:rgba(16,185,129,.14);color:var(--ok)}
+.notif-icon.sys{background:rgba(139,92,246,.13);color:var(--primary-2)}
+.notif-body{flex:1;min-width:0}
+.notif-msg{font-size:13px;color:var(--text-base);line-height:1.5}
+.notif-msg b{color:var(--text-strong);font-weight:600}
+.notif-meta{display:flex;align-items:center;gap:10px;margin-top:5px;font-size:11.5px;color:var(--text-faint)}
+.notif-device{font-family:"Consolas",monospace;font-size:11px;background:rgba(14,165,233,.1);color:var(--primary);padding:1px 6px;border-radius:5px}
+.notif-tag{background:var(--glass);border:1px solid var(--line);padding:1px 6px;border-radius:5px}
+.notif-unread-dot{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--primary)}
+
+/* ---------- 主题切换抽屉 ---------- */
+body[data-theme="fluent"]{--bg-base:#eef1f8;--primary:#0ea5e9;--primary-2:#8b5cf6;--primary-soft:rgba(14,165,233,.12);--primary2-soft:rgba(139,92,246,.12);--text-strong:#0f172a;--text-base:#334155;--text-dim:#64748b;--text-faint:#94a3b8;--glass:rgba(255,255,255,.62);--glass-hover:rgba(255,255,255,.78);--line:rgba(15,23,42,.08);--line-soft:rgba(15,23,42,.05);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(15,23,42,.06);--shadow-md:0 8px 24px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.04);--shadow-lg:0 18px 48px rgba(79,70,229,.12),0 6px 14px rgba(15,23,42,.06)}
+body[data-theme="aurora"]{--bg-base:#0a0e27;--primary:#a855f7;--primary-2:#06b6d4;--primary-soft:rgba(168,85,247,.15);--primary2-soft:rgba(6,182,212,.15);--text-strong:#f0f4ff;--text-base:#c7d2fe;--text-dim:#8b95c7;--text-faint:#5b6494;--glass:rgba(20,28,60,.55);--glass-hover:rgba(30,40,80,.65);--line:rgba(140,160,220,.18);--line-soft:rgba(140,160,220,.07);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+body[data-theme="deep"]{--bg-base:#06172d;--primary:#00e6ff;--primary-2:#2f6dff;--primary-soft:rgba(0,230,255,.12);--primary2-soft:rgba(47,109,255,.12);--text-strong:#dffbff;--text-base:#9fdcef;--text-dim:#5b8fa8;--text-faint:#3d6075;--glass:rgba(8,30,55,.6);--glass-hover:rgba(12,40,72,.72);--line:rgba(0,230,255,.22);--line-soft:rgba(0,230,255,.08);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+body[data-theme="mineral"]{--bg-base:#0a1a1f;--primary:#14b8a6;--primary-2:#0ea5e9;--primary-soft:rgba(20,184,166,.12);--primary2-soft:rgba(14,165,233,.12);--text-strong:#d1f0ee;--text-base:#9fd6d0;--text-dim:#5b8a85;--text-faint:#3d5e5a;--glass:rgba(14,32,38,.62);--glass-hover:rgba(18,42,50,.74);--line:rgba(20,184,166,.22);--line-soft:rgba(20,184,166,.07);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+.drawer-mask{position:fixed;inset:0;background:rgba(5,8,20,.5);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.drawer-mask.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:400px;z-index:101;background:var(--bg-base);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:18px;color:var(--text-strong);font-weight:700}
+.drawer-head h2 small{display:block;font-size:11px;color:var(--text-dim);font-weight:400;margin-top:4px}
+.drawer-close{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--glass);color:var(--text-dim);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s}
+.drawer-close:hover{color:var(--err);border-color:var(--err)}
+.drawer-body{flex:1;overflow-y:auto;padding:18px 20px}
+.theme-card{display:flex;align-items:center;gap:16px;padding:16px;border-radius:14px;border:2px solid var(--line);background:var(--glass);cursor:pointer;transition:.2s;position:relative;margin-bottom:12px}
+.theme-card:hover{border-color:var(--primary);transform:translateX(-3px)}
+.theme-card.active{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.theme-card.active::after{content:"✓ 当前";position:absolute;top:10px;right:12px;font-size:10px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2));padding:2px 8px;border-radius:10px}
+.theme-swatch{flex:none;width:64px;height:64px;border-radius:11px;overflow:hidden;position:relative;border:1px solid rgba(0,0,0,.1)}
+.theme-info{flex:1;min-width:0}
+.theme-info b{display:block;font-size:14px;color:var(--text-strong);font-weight:600}
+.theme-info p{font-size:11.5px;color:var(--text-dim);margin-top:3px;line-height:1.4}
+.theme-dots{display:flex;gap:4px;margin-top:8px}
+.theme-dots span{width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.2)}
+
+</style>
+
+<style>
+.drawer-mask{position:fixed;inset:0;background:rgba(5,8,20,.5);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.drawer-mask.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:400px;z-index:101;background:var(--bg-base);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid rgba(15,23,42,.08)}
+.drawer-head h2{font-size:18px;color:#0f172a;font-weight:700}
+.drawer-head h2 small{display:block;font-size:11px;color:#64748b;font-weight:400;margin-top:4px}
+.drawer-close{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--glass);color:var(--text-dim);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s}
+.drawer-close:hover{color:#ef4444;border-color:#ef4444}
+.drawer-body{flex:1;overflow-y:auto;padding:18px 20px}
+
+/* ========== 通知抽屉 ========== */
+.notif-mask{position:fixed;inset:0;background:rgba(5,8,20,.5);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.notif-mask.open{opacity:1;visibility:visible}
+.notif-drawer{position:fixed;top:0;right:0;bottom:0;width:400px;z-index:101;background:var(--bg-base);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)}
+.notif-drawer.open{transform:translateX(0)}
+.notif-head{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 14px;border-bottom:1px solid var(--line)}
+.notif-title{display:flex;align-items:center;gap:10px}
+.notif-title h2{font-size:17px;color:var(--text-strong);font-weight:700}
+.notif-badge{min-width:20px;height:20px;background:var(--err);color:#fff;font-size:11px;font-weight:700;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;padding:0 6px}
+.notif-actions{display:flex;align-items:center;gap:8px}
+.notif-markread{background:none;border:none;color:var(--primary);font-size:12.5px;font-weight:600;cursor:pointer;padding:4px 8px;border-radius:7px;transition:.18s}
+.notif-markread:hover{background:var(--primary-soft)}
+.notif-close{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:rgba(255,255,255,.5);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:.18s}
+.notif-close:hover{color:var(--text-strong);background:var(--glass-hover)}
+.notif-tabs{display:flex;gap:4px;padding:12px 16px;border-bottom:1px solid var(--line-soft)}
+.notif-tab{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;transition:.18s}
+.notif-tab:hover{color:var(--text-base)}
+.notif-tab.active{background:var(--primary-soft);color:var(--primary);font-weight:600}
+.notif-list{flex:1;overflow-y:auto;padding:8px 8px}
+.notif-item{display:flex;gap:12px;padding:14px 14px;border-radius:12px;cursor:pointer;transition:.18s;position:relative;align-items:flex-start}
+.notif-item:hover{background:var(--glass-hover)}
+.notif-item.unread{background:rgba(14,165,233,.04)}
+.notif-item.unread:hover{background:rgba(14,165,233,.08)}
+.notif-icon{flex:none;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.notif-icon.alarm{background:rgba(239,68,68,.13);color:var(--err)}
+.notif-icon.warn{background:rgba(245,158,11,.15);color:var(--warn)}
+.notif-icon.order{background:var(--primary-soft);color:var(--primary)}
+.notif-icon.ok{background:rgba(16,185,129,.14);color:var(--ok)}
+.notif-icon.sys{background:rgba(139,92,246,.13);color:var(--primary-2)}
+.notif-body{flex:1;min-width:0}
+.notif-msg{font-size:13px;color:var(--text-base);line-height:1.5}
+.notif-msg b{color:var(--text-strong);font-weight:600}
+.notif-meta{display:flex;align-items:center;gap:10px;margin-top:5px;font-size:11.5px;color:var(--text-faint)}
+.notif-device{font-family:"Consolas",monospace;font-size:11px;background:rgba(14,165,233,.1);color:var(--primary);padding:1px 6px;border-radius:5px}
+.notif-tag{background:var(--glass);border:1px solid var(--line);padding:1px 6px;border-radius:5px}
+.notif-unread-dot{position:absolute;right:14px;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background:var(--primary)}
+
+/* ---------- 主题切换抽屉 ---------- */
+body[data-theme="fluent"]{--bg-base:#eef1f8;--primary:#0ea5e9;--primary-2:#8b5cf6;--primary-soft:rgba(14,165,233,.12);--primary2-soft:rgba(139,92,246,.12);--text-strong:#0f172a;--text-base:#334155;--text-dim:#64748b;--text-faint:#94a3b8;--glass:rgba(255,255,255,.62);--glass-hover:rgba(255,255,255,.78);--line:rgba(15,23,42,.08);--line-soft:rgba(15,23,42,.05);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(15,23,42,.06);--shadow-md:0 8px 24px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.04);--shadow-lg:0 18px 48px rgba(79,70,229,.12),0 6px 14px rgba(15,23,42,.06)}
+body[data-theme="aurora"]{--bg-base:#0a0e27;--primary:#a855f7;--primary-2:#06b6d4;--primary-soft:rgba(168,85,247,.15);--primary2-soft:rgba(6,182,212,.15);--text-strong:#f0f4ff;--text-base:#c7d2fe;--text-dim:#8b95c7;--text-faint:#5b6494;--glass:rgba(20,28,60,.55);--glass-hover:rgba(30,40,80,.65);--line:rgba(140,160,220,.18);--line-soft:rgba(140,160,220,.07);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+body[data-theme="deep"]{--bg-base:#06172d;--primary:#00e6ff;--primary-2:#2f6dff;--primary-soft:rgba(0,230,255,.12);--primary2-soft:rgba(47,109,255,.12);--text-strong:#dffbff;--text-base:#9fdcef;--text-dim:#5b8fa8;--text-faint:#3d6075;--glass:rgba(8,30,55,.6);--glass-hover:rgba(12,40,72,.72);--line:rgba(0,230,255,.22);--line-soft:rgba(0,230,255,.08);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+body[data-theme="mineral"]{--bg-base:#0a1a1f;--primary:#14b8a6;--primary-2:#0ea5e9;--primary-soft:rgba(20,184,166,.12);--primary2-soft:rgba(14,165,233,.12);--text-strong:#d1f0ee;--text-base:#9fd6d0;--text-dim:#5b8a85;--text-faint:#3d5e5a;--glass:rgba(14,32,38,.62);--glass-hover:rgba(18,42,50,.74);--line:rgba(20,184,166,.22);--line-soft:rgba(20,184,166,.07);--ok:#10b981;--warn:#f59e0b;--err:#ef4444;--shadow-sm:0 1px 3px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 18px 48px rgba(0,0,0,.5)}
+.drawer-mask{position:fixed;inset:0;background:rgba(5,8,20,.5);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.drawer-mask.open{opacity:1;visibility:visible}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:400px;z-index:101;background:var(--bg-base);border-left:1px solid var(--line);transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.3)}
+.drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:22px 24px;border-bottom:1px solid var(--line)}
+.drawer-head h2{font-size:18px;color:var(--text-strong);font-weight:700}
+.drawer-head h2 small{display:block;font-size:11px;color:var(--text-dim);font-weight:400;margin-top:4px}
+.drawer-close{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--glass);color:var(--text-dim);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s}
+.drawer-close:hover{color:var(--err);border-color:var(--err)}
+.drawer-body{flex:1;overflow-y:auto;padding:18px 20px}
+.theme-card{display:flex;align-items:center;gap:16px;padding:16px;border-radius:14px;border:2px solid var(--line);background:var(--glass);cursor:pointer;transition:.2s;position:relative;margin-bottom:12px}
+.theme-card:hover{border-color:var(--primary);transform:translateX(-3px)}
+.theme-card.active{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.theme-card.active::after{content:"✓ 当前";position:absolute;top:10px;right:12px;font-size:10px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2));padding:2px 8px;border-radius:10px}
+.theme-swatch{flex:none;width:64px;height:64px;border-radius:11px;overflow:hidden;position:relative;border:1px solid rgba(0,0,0,.1)}
+.theme-info{flex:1;min-width:0}
+.theme-info b{display:block;font-size:14px;color:var(--text-strong);font-weight:600}
+.theme-info p{font-size:11.5px;color:var(--text-dim);margin-top:3px;line-height:1.4}
+.theme-dots{display:flex;gap:4px;margin-top:8px}
+.theme-dots span{width:14px;height:14px;border-radius:4px;border:1px solid rgba(255,255,255,.2)}
+
 </style>
 </head>
-<body>
+<body data-theme="fluent">
 <div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
 
 <div class="app">
@@ -54,9 +195,10 @@
       <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div></div>
     <div class="search"><span class="ico">🔍</span><input placeholder="搜索…"></div>
     <div class="spacer"></div>
-    <div class="top-actions">
+        <div class="top-actions">
       <div class="icon-btn" title="数据大屏">🖥</div>
-      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="icon-btn" title="主题" onclick="openDrawer()">🎨</div>
+      <div class="icon-btn" title="通知" onclick="openNotif()">🔔<span class="dot"></span></div>
       <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
     </div>
   </header>
@@ -64,18 +206,18 @@
   <div class="body">
     <aside class="sidebar">
       <div class="nav-group-title">工作台</div>
-      <div class="nav-item"><span class="ico">📊</span>数据概览</div>
-      <div class="nav-item"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></div>
+      <div class="nav-item"><a href="demo-hub.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📊</span>数据概览</a></div>
+      <div class="nav-item"><a href="device-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></a></div>
       <div class="nav-group-title">售后服务</div>
-      <div class="nav-item"><span class="ico">📋</span>工单管理<span class="badge">12</span></div>
-      <div class="nav-item"><span class="ico">🔧</span>维修记录</div>
-      <div class="nav-item"><span class="ico">📞</span>客户回访</div>
+      <div class="nav-item"><a href="order-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📋</span>工单管理<span class="badge">12</span></a></div>
+      <div class="nav-item"><a href="repair-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🔧</span>维修记录</a></div>
+      <div class="nav-item"><a href="callback-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📞</span>客户回访</a></div>
       <div class="nav-group-title">业务管理</div>
-      <div class="nav-item"><span class="ico">👥</span>客户档案</div>
-      <div class="nav-item"><span class="ico">⚙️</span>设备型号</div>
-      <div class="nav-item active"><span class="ico">📈</span>统计报表</div>
+      <div class="nav-item"><a href="customer-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">👥</span>客户档案</a></div>
+      <div class="nav-item"><a href="device-model.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">⚙️</span>设备型号</a></div>
+      <div class="nav-item active"><a href="report-page.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📈</span>统计报表</a></div>
       <div class="nav-group-title">系统</div>
-      <div class="nav-item"><span class="ico">🛠️</span>系统设置</div>
+      <div class="nav-item"><a href="system-settings.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🛠️</span>系统设置</a></div>
     </aside>
 
     <main class="content">
@@ -223,5 +365,161 @@
     </main>
   </div>
 </div>
+
+<div class="drawer-mask" id="mask" onclick="closeDrawer()"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h2>主题切换<small>多主题演示页 · CSS 变量驱动</small></h2>
+    <button class="drawer-close" onclick="closeDrawer()">X</button>
+  </div>
+  <div class="drawer-body" id="themeList"></div>
+</aside>
+
+<script>
+function openDrawer(){
+  document.getElementById('mask').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+function closeDrawer(){
+  document.getElementById('mask').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){closeDrawer();}
+});
+
+function openNotif(){
+  document.getElementById('notifMask').classList.add('open');
+  document.getElementById('notifDrawer').classList.add('open');
+}
+function closeNotif(){
+  document.getElementById('notifMask').classList.remove('open');
+  document.getElementById('notifDrawer').classList.remove('open');
+}
+function markAllRead(){
+  document.querySelectorAll('.notif-item.unread').forEach(function(el){
+    el.classList.remove('unread');
+    var dot = el.querySelector('.notif-unread-dot');
+    if(dot) dot.remove();
+  });
+  var badge = document.getElementById('notifBadge');
+  if(badge) { badge.textContent = '0'; badge.style.display = 'none'; }
+  var bellDot = document.querySelector('.icon-btn[onclick*="openNotif"] .dot');
+  if(bellDot) bellDot.style.display = 'none';
+}
+function switchNotifTab(el){
+  document.querySelectorAll('.notif-tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  var tab = el.getAttribute('data-tab');
+  document.querySelectorAll('.notif-item').forEach(function(item){
+    item.style.display = (tab==='all' || item.getAttribute('data-type')===tab) ? 'flex' : 'none';
+  });
+}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeNotif();}});
+
+
+var THEMES=[
+  {id:'fluent',name:'Fluent 毛玻璃',desc:'浅色 Acrylic 材质，干净现代，长时间使用不累眼',dots:['#eef1f8','#0ea5e9','#8b5cf6'],grad:'linear-gradient(135deg,#eef1f8,#dbeafe)'},
+  {id:'aurora',name:'极光玻璃',desc:'午夜紫蓝底 + 紫青极光流光，优雅梦幻高端 SaaS',dots:['#0a0e27','#a855f7','#06b6d4'],grad:'linear-gradient(135deg,#0a0e27,#2d1b4e)'},
+  {id:'deep',name:'深空科技',desc:'深蓝黑底 + 霓虹青辉光，冷峻专业工业监控风',dots:['#06172d','#00e6ff','#2f6dff'],grad:'linear-gradient(135deg,#06172d,#0a2a4a)'},
+  {id:'mineral',name:'矿物青',desc:'墨青底 + 矿物青调，沉稳工业感，适合化工能源',dots:['#0a1a1f','#14b8a6','#0ea5e9'],grad:'linear-gradient(135deg,#0a1a1f,#0e3338)'}
+];
+var THEME_LABEL={fluent:'FLUENT',aurora:'AURORA',deep:'DEEP SPACE',mineral:'MINERAL'};
+(function(){
+  var list=document.getElementById('themeList');
+  if(!list) return;
+  THEMES.forEach(function(t){
+    var dotsHtml=t.dots.map(function(c){return '<span style="background:'+c+'"></span>'}).join('');
+    var card=document.createElement('div');
+    card.className='theme-card'+(document.body.dataset.theme===t.id?' active':'');
+    card.dataset.id=t.id;
+    card.innerHTML='<div class="theme-swatch" style="background:'+t.grad+'"></div><div class="theme-info"><b>'+t.name+'</b><p>'+t.desc+'</p><div class="theme-dots">'+dotsHtml+'</div></div>';
+    card.onclick=function(){switchTheme(t.id)};
+    list.appendChild(card);
+  });
+  function switchTheme(id){
+    document.body.dataset.theme=id;
+    document.querySelectorAll('.theme-card').forEach(function(c){c.classList.toggle('active',c.dataset.id===id)});
+  }
+  window.switchTheme=switchTheme;
+})();
+function openDrawer(){document.getElementById('mask').classList.add('open');document.getElementById('drawer').classList.add('open')}
+function closeDrawer(){document.getElementById('mask').classList.remove('open');document.getElementById('drawer').classList.remove('open')}
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeDrawer();}});
+
+</script>
+
+<!-- ============ 通知抽屉 ============ -->
+<div class="notif-mask" id="notifMask" onclick="closeNotif()"></div>
+<aside class="notif-drawer" id="notifDrawer">
+  <div class="notif-head">
+    <div class="notif-title"><h2>通知中心</h2><span class="notif-badge" id="notifBadge">3</span></div>
+    <div class="notif-actions">
+      <button class="notif-markread" onclick="markAllRead()">全部已读</button>
+      <button class="notif-close" onclick="closeNotif()">✕</button>
+    </div>
+  </div>
+  <div class="notif-tabs">
+    <span class="notif-tab active" data-tab="all" onclick="switchNotifTab(this)">全部</span>
+    <span class="notif-tab" data-tab="alarm" onclick="switchNotifTab(this)">设备报警</span>
+    <span class="notif-tab" data-tab="order" onclick="switchNotifTab(this)">工单提醒</span>
+    <span class="notif-tab" data-tab="sys" onclick="switchNotifTab(this)">系统通知</span>
+  </div>
+  <div class="notif-list" id="notifList">
+    <div class="notif-item unread" data-type="alarm">
+      <div class="notif-icon alarm">⚠</div>
+      <div class="notif-body">
+        <div class="notif-msg"><b>制冷主机A</b> 排气压力异常偏高（1.62MPa），超过阈值1.50MPa，已自动停机保护</div>
+        <div class="notif-meta"><span class="notif-time">06-20 14:22</span><span class="notif-device">220112521</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item unread" data-type="alarm">
+      <div class="notif-icon warn">🌡</div>
+      <div class="notif-body">
+        <div class="notif-msg"><b>制冷主机B</b> 排气温度偏高 75.2℃，持续8分钟后自行恢复</div>
+        <div class="notif-meta"><span class="notif-time">06-18 09:15</span><span class="notif-device">220112522</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item unread" data-type="order">
+      <div class="notif-icon order">📋</div>
+      <div class="notif-body">
+        <div class="notif-msg">工单 <b>#GD20260615</b> 已派发，等待工程师接单处理</div>
+        <div class="notif-meta"><span class="notif-time">06-22 10:05</span><span class="notif-tag">工单</span></div>
+      </div>
+      <div class="notif-unread-dot"></div>
+    </div>
+    <div class="notif-item" data-type="order">
+      <div class="notif-icon ok">✓</div>
+      <div class="notif-body">
+        <div class="notif-msg">工单 <b>#GD20260502</b> 保养任务已完工，更换润滑油 + 滤芯</div>
+        <div class="notif-meta"><span class="notif-time">06-15 16:40</span><span class="notif-tag">工单</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="alarm">
+      <div class="notif-icon sys">📡</div>
+      <div class="notif-body">
+        <div class="notif-msg">设备 <b>220112523</b> 通讯中断12分钟，NB-IoT信号弱，自动重连成功</div>
+        <div class="notif-meta"><span class="notif-time">04-28 02:11</span><span class="notif-device">220112523</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="sys">
+      <div class="notif-icon sys">📈</div>
+      <div class="notif-body">
+        <div class="notif-msg">系统已于 <b>04-12 23:50</b> 完成固件升级，v3.1.0 → v3.2.1</div>
+        <div class="notif-meta"><span class="notif-time">04-12 23:50</span><span class="notif-tag">系统</span></div>
+      </div>
+    </div>
+    <div class="notif-item" data-type="sys">
+      <div class="notif-icon sys">🔔</div>
+      <div class="notif-body">
+        <div class="notif-msg">设备 <b>220112518</b> 维保合同将于 <b>30天后</b>（2026-07-24）到期，请及时续保</div>
+        <div class="notif-meta"><span class="notif-time">昨天 08:00</span><span class="notif-tag">维保</span></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
 </body>
 </html>

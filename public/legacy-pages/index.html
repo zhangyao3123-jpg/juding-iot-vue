@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>久鼎物联网 · 登录</title>
+<style>
+:root{
+  --bg-base:#eef1f8;
+  --bg-deep:#e3e8f3;
+  --sky:#0ea5e9;--sky-soft:rgba(14,165,233,.12);
+  --violet:#8b5cf6;--violet-soft:rgba(139,92,246,.12);
+  --mint:#10b981;
+  --amber:#f59e0b;--rose:#f43f5e;--indigo:#6366f1;
+  --text-strong:#0f172a;--text-base:#334155;--text-dim:#64748b;--text-faint:#94a3b8;
+  --acrylic:rgba(255,255,255,.62);--acrylic-hover:rgba(255,255,255,.82);--acrylic-strong:rgba(255,255,255,.86);
+  --line:rgba(15,23,42,.08);--line-soft:rgba(15,23,42,.05);
+  --ok:#10b981;--warn:#f59e0b;--err:#ef4444;
+  --r-sm:10px;--r-md:16px;--r-lg:22px;
+  --shadow-sm:0 1px 3px rgba(15,23,42,.06),0 1px 2px rgba(15,23,42,.04);
+  --shadow-md:0 8px 24px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.04);
+  --shadow-lg:0 18px 48px rgba(79,70,229,.1),0 6px 14px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Segoe UI Variable","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color:var(--text-base);background:var(--bg-base);
+  overflow:hidden;-webkit-font-smoothing:antialiased;
+}
+/* ---------- Mica 彩雾背景 ---------- */
+.mica-bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:linear-gradient(135deg,#eef1f8 0%,#e9edf6 50%,#f0eef8 100%);}
+.mica-bg .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 22s ease-in-out infinite;}
+.mica-bg .b1{width:560px;height:560px;left:-140px;top:-100px;background:radial-gradient(circle,rgba(14,165,233,.5),transparent 70%)}
+.mica-bg .b2{width:520px;height:520px;right:-120px;top:80px;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%);animation-delay:-7s}
+.mica-bg .b3{width:620px;height:400px;left:30%;bottom:-180px;background:radial-gradient(circle,rgba(99,102,241,.4),transparent 70%);animation-delay:-14s}
+.mica-bg .b4{width:300px;height:300px;left:60%;top:50%;background:radial-gradient(circle,rgba(16,185,129,.32),transparent 70%);animation-delay:-3s}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.06)}66%{transform:translate(-30px,40px) scale(.96)}}
+.mica-bg .noise{position:absolute;inset:0;opacity:.4;background-image:linear-gradient(rgba(15,23,42,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,.025) 1px,transparent 1px);background-size:44px 44px;}
+/* ---------- 登录容器 ---------- */
+.login-wrap{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+/* 主卡片 */
+.login-card{
+  width:100%;max-width:960px;
+  display:grid;grid-template-columns:1fr 400px;
+  border-radius:var(--r-lg);
+  background:var(--acrylic-strong);
+  border:1px solid var(--line);
+  backdrop-filter:blur(30px) saturate(1.6);
+  box-shadow:var(--shadow-lg);
+  overflow:hidden;
+  animation:cardIn .65s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+/* ---------- 左侧品牌区 ---------- */
+.card-left{
+  padding:56px 48px;
+  background:linear-gradient(160deg,rgba(14,165,233,.06) 0%,rgba(139,92,246,.08) 100%);
+  border-right:1px solid var(--line-soft);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
+}
+/* 左侧装饰圆 */
+.card-left::before{
+  content:"";position:absolute;width:380px;height:380px;border-radius:50%;
+  border:1px solid rgba(14,165,233,.1);right:-140px;top:50%;transform:translateY(-50%);
+  animation:spinSlow 28s linear infinite;pointer-events:none;
+}
+.card-left::after{
+  content:"";position:absolute;width:260px;height:260px;border-radius:50%;
+  border:1px solid rgba(139,92,246,.1);right:-80px;top:50%;transform:translateY(-50%);
+  animation:spinSlow 18s linear infinite reverse;pointer-events:none;
+}
+@keyframes spinSlow{to{transform:translateY(-50%) rotate(360deg)}}
+.brand{display:flex;align-items:center;gap:16px;margin-bottom:40px;position:relative;z-index:1}
+.brand .logo{
+  width:56px;height:56px;border-radius:15px;
+  background:linear-gradient(135deg,var(--sky),var(--violet));
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:800;color:#fff;
+  box-shadow:0 8px 24px rgba(14,165,233,.32);
+}
+.brand .text b{display:block;font-size:20px;color:var(--text-strong);font-weight:700;letter-spacing:.5px}
+.brand .text small{display:block;font-size:10px;color:var(--text-dim);letter-spacing:3px;margin-top:3px}
+.card-left h2{font-size:30px;color:var(--text-strong);font-weight:800;line-height:1.28;margin-bottom:14px;position:relative;z-index:1;}
+.card-left h2 span{display:block;color:var(--sky)}
+.card-left > p{font-size:14px;color:var(--text-dim);line-height:1.75;position:relative;z-index:1;}
+/* 特性列表 */
+.features{margin-top:40px;display:flex;flex-direction:column;gap:14px;position:relative;z-index:1}
+.feat{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:13px;
+  background:var(--acrylic);border:1px solid var(--line);
+  transition:.22s;
+}
+.feat:hover{background:var(--acrylic-hover);box-shadow:var(--shadow-sm);transform:translateX(4px)}
+.feat-icon{
+  width:36px;height:36px;border-radius:11px;
+  display:flex;align-items:center;justify-content:center;font-size:17px;flex:none;
+}
+.feat-icon.sky{background:var(--sky-soft);color:var(--sky)}
+.feat-icon.violet{background:var(--violet-soft);color:var(--violet)}
+.feat-icon.mint{background:rgba(16,185,129,.14);color:var(--mint)}
+.feat-text b{display:block;font-size:14px;color:var(--text-strong);font-weight:600;margin-bottom:1px}
+.feat-text small{font-size:12px;color:var(--text-dim);line-height:1.5}
+/* ---------- 右侧登录表单 ---------- */
+.card-right{
+  padding:52px 44px;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;
+}
+/* 右上角装饰 */
+.card-right::before{
+  content:"";position:absolute;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(14,165,233,.08),transparent 70%);
+  top:-50px;right:-50px;pointer-events:none;
+}
+.login-header{margin-bottom:34px}
+.login-header h3{font-size:22px;color:var(--text-strong);font-weight:700;margin-bottom:5px}
+.login-header p{font-size:13px;color:var(--text-dim)}
+/* 输入框 */
+.input-group{margin-bottom:18px;position:relative}
+.input-group label{display:block;font-size:12px;color:var(--text-dim);margin-bottom:8px;font-weight:600;letter-spacing:.3px}
+.input-wrap{position:relative}
+.input-wrap .ico{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;z-index:1;}
+.input-wrap input{
+  width:100%;height:48px;padding:0 42px 0 44px;
+  background:rgba(255,255,255,.65);
+  border:1.5px solid var(--line);
+  border-radius:12px;
+  color:var(--text-base);font-size:14px;outline:none;
+  transition:.22s;backdrop-filter:blur(10px);
+  font-family:inherit;
+}
+.input-wrap input::placeholder{color:var(--text-faint)}
+.input-wrap input:focus{
+  border-color:var(--sky);
+  background:#fff;
+  box-shadow:0 0 0 4px var(--sky-soft),0 4px 16px rgba(14,165,233,.1);
+}
+.toggle-pwd{
+  position:absolute;right:14px;top:50%;transform:translateY(-50%);
+  background:none;border:none;color:var(--text-faint);cursor:pointer;
+  font-size:13px;padding:4px 6px;transition:color .2s;
+}
+.toggle-pwd:hover{color:var(--sky)}
+/* 记住 + 忘记 */
+.row-between{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px}
+.remember-me{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.remember-me input{display:none}
+.check-box{
+  width:18px;height:18px;border-radius:5px;
+  border:1.5px solid var(--line);
+  display:flex;align-items:center;justify-content:center;
+  transition:.2s;flex:none;
+}
+.remember-me input:checked + .check-box{
+  background:linear-gradient(135deg,var(--sky),var(--violet));border-color:transparent;
+}
+.check-box::after{content:"✔";font-size:10px;color:#fff;opacity:0;transition:.2s}
+.remember-me input:checked + .check-box::after{opacity:1}
+.remember-me span{font-size:13px;color:var(--text-dim)}
+.forgot{font-size:13px;color:var(--sky);text-decoration:none;font-weight:500;transition:opacity .2s;}
+.forgot:hover{opacity:.7}
+/* 登录按钮 */
+.btn-login{
+  width:100%;height:50px;border:none;border-radius:13px;
+  background:linear-gradient(135deg,var(--sky),var(--violet));
+  color:#fff;font-size:15px;font-weight:700;letter-spacing:.5px;cursor:pointer;
+  box-shadow:0 8px 24px rgba(14,165,233,.32);
+  transition:.25s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-login::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);
+  opacity:0;transition:.25s;
+}
+.btn-login:hover{filter:brightness(1.05);transform:translateY(-2px);box-shadow:0 14px 32px rgba(14,165,233,.42)}
+.btn-login:hover::after{opacity:1}
+.btn-login:active{transform:translateY(0)}
+.btn-login:disabled{opacity:.55;cursor:not-allowed;transform:none;filter:none}
+.spinner{width:17px;height:17px;border:2px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* 错误提示 */
+.error-msg{font-size:12px;color:var(--err);margin-top:6px;display:none;}
+.error-msg.show{display:block}
+/* 底部 */
+.login-footer{text-align:center;margin-top:26px;font-size:12px;color:var(--text-faint)}
+/* 成功覆盖层 */
+.success-overlay{
+  position:absolute;inset:0;
+  background:var(--acrylic-strong);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:.4s;
+}
+.success-overlay.show{opacity:1;pointer-events:auto}
+.ok-circle{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--mint),var(--sky));
+  display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;
+  box-shadow:0 12px 32px rgba(16,185,129,.38);
+  animation:popIn .5s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes popIn{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+.success-overlay p{margin-top:16px;font-size:16px;color:var(--text-strong);font-weight:600}
+.success-overlay small{display:block;margin-top:6px;font-size:13px;color:var(--text-dim)}
+/* 扫描光效 */
+.scan-bar{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--sky),var(--violet),transparent);opacity:.6;animation:scanH .08s linear infinite;}
+@keyframes scanH{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+/* 响应式 */
+@media(max-width:720px){
+  .login-card{grid-template-columns:1fr;max-width:420px}
+  .card-left{padding:36px 28px;border-right:none;border-bottom:1px solid var(--line-soft)}
+  .card-left::before,.card-left::after{display:none}
+  .card-right{padding:36px 28px}
+  .features{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Mica 彩雾背景 -->
+<div class="mica-bg">
+  <div class="noise"></div>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+  <div class="blob b4"></div>
+</div>
+
+<div class="login-wrap">
+  <div class="login-card">
+
+    <!-- 左侧品牌区 -->
+    <div class="card-left">
+      <div class="brand">
+        <div class="logo">久</div>
+        <div class="text">
+          <b>久鼎物联网</b>
+          <small>JUDING IOT</small>
+        </div>
+      </div>
+      <h2>物联网设备<br><span>售后管理平台</span></h2>
+      <p>一站式管理设备监控、工单派发、维修记录与客户回访，全流程数字化运营。</p>
+      <div class="features">
+        <div class="feat">
+          <div class="feat-icon sky">&#128200;</div>
+          <div class="feat-text">
+            <b>实时监控</b>
+            <small>设备在线状态、温度、告警一目了然</small>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon violet">&#128203;</div>
+          <div class="feat-text">
+            <b>工单管理</b>
+            <small>全生命周期跟踪，维修记录可追溯</small>
+          </div>
+        </div>
+        <div class="feat">
+          <div class="feat-icon mint">&#128222;</div>
+          <div class="feat-text">
+            <b>客户回访</b>
+            <small>自动提醒，服务闭环管理</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右侧登录表单 -->
+    <div class="card-right" style="position:relative;overflow:hidden">
+
+      <div class="login-header">
+        <h3>欢迎回来</h3>
+        <p>请登录以继续使用系统</p>
+      </div>
+
+      <form id="loginForm" onsubmit="return false">
+        <div class="input-group">
+          <label>用户名</label>
+          <div class="input-wrap">
+            <span class="ico">&#128100;</span>
+            <input type="text" id="username" placeholder="请输入用户名" autocomplete="username" value="admin">
+          </div>
+          <div class="error-msg" id="userErr">用户名不能为空</div>
+        </div>
+        <div class="input-group">
+          <label>密码</label>
+          <div class="input-wrap">
+            <span class="ico">&#128272;</span>
+            <input type="password" id="password" placeholder="请输入密码" autocomplete="current-password" value="admin123">
+            <button type="button" class="toggle-pwd" id="togglePwd" onclick="togglePassword()">&#128065;</button>
+          </div>
+          <div class="error-msg" id="pwdErr">密码不能为空</div>
+        </div>
+
+        <div class="row-between">
+          <label class="remember-me">
+            <input type="checkbox" id="rememberMe" checked>
+            <div class="check-box"></div>
+            <span>记住登录状态</span>
+          </label>
+          <a href="#" class="forgot">忘记密码？</a>
+        </div>
+
+        <button type="submit" class="btn-login" id="loginBtn" onclick="doLogin()">
+          <span id="btnText">&#128272; 登 录</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        &copy; 2026 久鼎物联网 · 苏ICP备16018702号
+      </div>
+
+      <!-- 成功覆盖层 -->
+      <div class="success-overlay" id="successOverlay">
+        <div class="scan-bar"></div>
+        <div class="ok-circle">&#10003;</div>
+        <p id="successMsg">登录成功</p>
+        <small id="successSub">正在跳转管理后台…</small>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+window.togglePassword = function(){
+  var inp = document.getElementById('password');
+  var btn = document.getElementById('togglePwd');
+  if(inp.type === 'password'){ inp.type = 'text'; btn.textContent = '🔒'; }
+  else{ inp.type = 'password'; btn.textContent = '👁'; }
+};
+
+window.doLogin = function(){
+  var user = document.getElementById('username').value.trim();
+  var pwd = document.getElementById('password').value;
+  var btn = document.getElementById('loginBtn');
+  var btnText = document.getElementById('btnText');
+  var overlay = document.getElementById('successOverlay');
+  var userErr = document.getElementById('userErr');
+  var pwdErr = document.getElementById('pwdErr');
+
+  userErr.classList.remove('show');
+  pwdErr.classList.remove('show');
+
+  if(!user){ userErr.classList.add('show'); return; }
+  if(!pwd){ pwdErr.classList.add('show'); return; }
+
+  btn.disabled = true;
+  btnText.innerHTML = '<div class="spinner"></div> 验证中…';
+
+  setTimeout(function(){
+    btnText.innerHTML = '<div class="spinner"></div> 登录中…';
+    setTimeout(function(){
+      if(user === 'admin' && pwd === 'admin123'){
+        btn.style.display = 'none';
+        document.getElementById('successMsg').textContent = '管理员登录成功';
+        document.getElementById('successSub').textContent = '正在跳转控制台…';
+        overlay.classList.add('show');
+        setTimeout(function(){ window.location.href = 'demo-hub.html'; }, 1400);
+      } else {
+        btn.disabled = false;
+        btnText.innerHTML = '🔒 登 录';
+        pwdErr.textContent = '用户名或密码错误';
+        pwdErr.classList.add('show');
+      }
+    }, 650);
+  }, 380);
+};
+</script>
+
+</body>
+</html>
