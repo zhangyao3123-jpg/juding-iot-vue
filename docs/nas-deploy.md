@@ -28,8 +28,8 @@ scp -P <port> -r dist/* <user>@<host>:/volume3/docker/jdpc/html/
 ssh <user>@<host> -p <port> "cd /volume3/docker/jdpc && docker compose up -d"
 ```
 
-默认映射端口为 `8088`，部署后访问：
+默认映射端口为 `23456`，部署后访问：
 
 ```text
-http://<NAS地址>:8088
+http://<NAS地址>:23456
 ```
