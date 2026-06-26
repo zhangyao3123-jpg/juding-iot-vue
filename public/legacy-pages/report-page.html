@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>统计报表 · 久鼎物联网售后管理系统</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* 统计报表 - 页面特有样式 */
+.grid-2{display:grid;grid-template-columns:1.6fr 1fr;gap:16px;margin-bottom:16px}
+.chart-wrap{padding:18px 20px 20px}
+.chart-wrap svg{width:100%;height:220px;display:block}
+.legend{display:flex;gap:20px;margin-top:8px;font-size:12px;color:var(--text-dim)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.pie-area{display:flex;align-items:center;justify-content:center;gap:24px;padding:18px 20px}
+.pie-area svg{flex:none}
+.pie-legend{font-size:12px;color:var(--text-dim)}
+.pie-legend li{list-style:none;display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.pie-legend .dot{width:10px;height:10px;border-radius:3px;flex:none}
+.pie-legend .val{font-weight:700;color:var(--text-strong);margin-left:auto;min-width:30px;text-align:right}
+/* 区域排行条 */
+.rank-list{padding:6px 20px 20px;display:flex;flex-direction:column;gap:12px}
+.rank-row{display:flex;align-items:center;gap:10px;font-size:13px}
+.rank-row .rank-num{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}
+.rank-num.top1{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff}
+.rank-num.top2{background:var(--primary2-soft);color:var(--primary-2)}
+.rank-num.top3{background:var(--primary-soft);color:var(--primary)}
+.rank-num.normal{background:rgba(100,116,139,.12);color:var(--text-dim)}
+.rank-row .name{width:70px;color:var(--text-base);flex:none;font-weight:500}
+.rank-row .track{flex:1;height:18px;background:rgba(15,23,42,.06);border-radius:9px;overflow:hidden}
+.rank-row .fill{height:100%;border-radius:9px;background:linear-gradient(90deg,var(--primary),var(--primary-2));position:relative;transition:.5s}
+.rank-row .fill::after{content:"";position:absolute;right:0;top:0;bottom:0;width:6px;background:rgba(255,255,255,.5);filter:blur(2px);border-radius:0 9px 9px 0}
+.rank-row .count{width:50px;text-align:right;font-weight:700;color:var(--text-strong);font-variant-numeric:tabular-nums;flex:none}
+/* 工程师绩效 */
+.perf-table{padding:0 20px 16px}
+.perf-table table{width:100%;border-collapse:collapse}
+.perf-table thead th{text-align:left;font-size:11.5px;color:var(--text-dim);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line-soft)}
+.perf-table tbody td{padding:11px 12px;font-size:13px;color:var(--text-base);border-bottom:1px solid var(--line-soft)}
+.perf-table tbody tr:hover{background:rgba(14,165,233,.04)}
+.perf-rate{display:flex;align-items:center;gap:8px}
+.perf-rate .bar{flex:1;height:6px;background:rgba(15,23,42,.06);border-radius:3px;overflow:hidden;max-width:80px}
+.perf-rate .fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--ok),var(--primary))}
+.perf-rate .pct{font-size:12px;font-weight:600;color:var(--text-strong);font-variant-numeric:tabular-nums;min-width:36px}
+.score-stars{color:var(--warn);font-size:13px;letter-spacing:1px}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div></div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><span class="ico">📊</span>数据概览</div>
+      <div class="nav-item"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item"><span class="ico">📋</span>工单管理<span class="badge">12</span></div>
+      <div class="nav-item"><span class="ico">🔧</span>维修记录</div>
+      <div class="nav-item"><span class="ico">📞</span>客户回访</div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item"><span class="ico">👥</span>客户档案</div>
+      <div class="nav-item"><span class="ico">⚙️</span>设备型号</div>
+      <div class="nav-item active"><span class="ico">📈</span>统计报表</div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item"><span class="ico">🛠️</span>系统设置</div>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div><h1>统计报表</h1><div class="crumb">首页 / 业务管理 / <b>统计报表</b></div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost">⟳ 刷新数据</button>
+          <button class="btn btn-primary">⤓ 导出 PDF</button>
+        </div>
+      </div>
+
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="mi" style="background:var(--primary-soft);color:var(--primary)">📋</div><div><div class="mt">本月工单</div><div class="mv">186</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(16,185,129,.14);color:var(--ok)">✓</div><div><div class="mt">完工率</div><div class="mv">94.6%</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(245,158,11,.14);color:var(--warn)">⏱</div><div><div class="mt">平均响应</div><div class="mv">2.4<span style="font-size:13px;color:var(--text-dim);font-weight:500">h</span></div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:var(--primary2-soft);color:var(--primary-2)">⭐</div><div><div class="mt">客户满意度</div><div class="mv">98.6%</div></div></div>
+      </div>
+
+      <!-- 上半部：趋势 + 分布 -->
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head">
+            <h3><span class="bar"></span>工单趋势</h3>
+            <div class="tab-group">
+              <div class="tab-item">本周</div>
+              <div class="tab-item active">本月</div>
+              <div class="tab-item">本季度</div>
+            </div>
+          </div>
+          <div class="chart-wrap">
+            <svg viewBox="0 0 600 220" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary)" stop-opacity="0.35"/><stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/></linearGradient>
+                <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--ok)" stop-opacity="0.3"/><stop offset="100%" stop-color="var(--ok)" stop-opacity="0"/></linearGradient>
+                <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--primary-2)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--primary-2)" stop-opacity="0"/></linearGradient>
+              </defs>
+              <g stroke="var(--line)"><line x1="0" y1="44" x2="600" y2="44"/><line x1="0" y1="88" x2="600" y2="88"/><line x1="0" y1="132" x2="600" y2="132"/><line x1="0" y1="176" x2="600" y2="176"/></g>
+              <!-- 新建 -->
+              <path d="M0,160 C50,140 100,110 150,120 C200,130 250,80 300,70 C350,60 400,90 450,50 C500,40 550,55 600,30 L600,220 L0,220 Z" fill="url(#g1)"/>
+              <path d="M0,160 C50,140 100,110 150,120 C200,130 250,80 300,70 C350,60 400,90 450,50 C500,40 550,55 600,30" fill="none" stroke="var(--primary)" stroke-width="2.5"/>
+              <!-- 完工 -->
+              <path d="M0,170 C50,165 100,145 150,155 C200,148 250,110 300,100 C350,95 400,120 450,85 C500,78 550,90 600,65 L600,220 L0,220 Z" fill="url(#g2)"/>
+              <path d="M0,170 C50,165 100,145 150,155 C200,148 250,110 300,100 C350,95 400,120 450,85 C500,78 550,90 600,65" fill="none" stroke="var(--ok)" stroke-width="2.5"/>
+              <!-- 关闭 -->
+              <path d="M0,185 C50,182 100,170 150,175 C200,172 250,145 300,140 C350,138 400,155 450,125 C500,118 550,130 600,108 L600,220 L0,220 Z" fill="url(#g3)"/>
+              <path d="M0,185 C50,182 100,170 150,175 C200,172 250,145 300,140 C350,138 400,155 450,125 C500,118 550,130 600,108" fill="none" stroke="var(--primary-2)" stroke-width="2"/>
+              <g fill="#fff" stroke="var(--primary)" stroke-width="2"><circle cx="300" cy="70" r="4"/><circle cx="450" cy="50" r="4"/></g>
+              <g fill="#fff" stroke="var(--ok)" stroke-width="2"><circle cx="300" cy="100" r="4"/><circle cx="450" cy="85" r="4"/></g>
+              <g fill="var(--text-dim)" font-size="11" text-anchor="middle"><text x="0" y="212">06-01</text><text x="100" y="212">06-05</text><text x="200" y="212">06-10</text><text x="300" y="212">06-15</text><text x="400" y="212">06-18</text><text x="500" y="212">06-21</text><text x="600" y="212">06-23</text></g>
+            </svg>
+            <div class="legend">
+              <span><span class="dot" style="background:var(--primary)"></span>新建工单</span>
+              <span><span class="dot" style="background:var(--ok)"></span>完工工单</span>
+              <span><span class="dot" style="background:var(--primary-2)"></span>关闭工单</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3><span class="bar"></span>工单类型分布</h3></div>
+          <div class="pie-area">
+            <svg width="140" height="140" viewBox="0 0 140 140">
+              <defs><linearGradient id="pg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="var(--primary)"/><stop offset="100%" stop-color="var(--primary-2)"/></linearGradient></defs>
+              <!-- 故障维修 50% -->
+              <circle cx="70" cy="70" r="52" fill="none" stroke="var(--err)" stroke-width="22" stroke-dasharray="163.4 326.7" transform="rotate(-90 70 70)"/>
+              <!-- 定期保养 29% -->
+              <circle cx="70" cy="70" r="52" fill="none" stroke="var(--primary)" stroke-width="22" stroke-dasharray="94.7 326.7" stroke-dashoffset="-163.4" transform="rotate(-90 70 70)"/>
+              <!-- 安装调试 15% -->
+              <circle cx="70" cy="70" r="52" fill="none" stroke="var(--ok)" stroke-width="22" stroke-dasharray="49 326.7" stroke-dashoffset="-258.1" transform="rotate(-90 70 70)"/>
+              <!-- 技术咨询 6% -->
+              <circle cx="70" cy="70" r="52" fill="none" stroke="var(--primary-2)" stroke-width="22" stroke-dasharray="19.6 326.7" stroke-dashoffset="-307.1" transform="rotate(-90 70 70)"/>
+              <text x="70" y="66" text-anchor="middle" fill="var(--text-strong)" font-size="22" font-weight="800">186</text>
+              <text x="70" y="82" text-anchor="middle" fill="var(--text-dim)" font-size="10" letter-spacing="1">总工单</text>
+            </svg>
+            <ul class="pie-legend">
+              <li><span class="dot" style="background:var(--err)"></span>故障维修<span class="val">93</span></li>
+              <li><span class="dot" style="background:var(--primary)"></span>定期保养<span class="val">54</span></li>
+              <li><span class="dot" style="background:var(--ok)"></span>安装调试<span class="val">28</span></li>
+              <li><span class="dot" style="background:var(--primary-2)"></span>技术咨询<span class="val">11</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 下半部：区域排行 + 工程师绩效 -->
+      <div class="grid-2">
+        <div class="panel">
+          <div class="panel-head"><h3><span class="bar"></span>区域工单排行</h3></div>
+          <div class="rank-list">
+            <div class="rank-row"><span class="rank-num top1">1</span><span class="name">华东地区</span><div class="track"><div class="fill" style="width:86%"></div></div><span class="count">426</span></div>
+            <div class="rank-row"><span class="rank-num top2">2</span><span class="name">华北地区</span><div class="track"><div class="fill" style="width:72%"></div></div><span class="count">358</span></div>
+            <div class="rank-row"><span class="rank-num top3">3</span><span class="name">西北地区</span><div class="track"><div class="fill" style="width:58%"></div></div><span class="count">289</span></div>
+            <div class="rank-row"><span class="rank-num normal">4</span><span class="name">华中地区</span><div class="track"><div class="fill" style="width:44%"></div></div><span class="count">218</span></div>
+            <div class="rank-row"><span class="rank-num normal">5</span><span class="name">华南地区</span><div class="track"><div class="fill" style="width:31%"></div></div><span class="count">154</span></div>
+            <div class="rank-row"><span class="rank-num normal">6</span><span class="name">东北地区</span><div class="track"><div class="fill" style="width:18%"></div></div><span class="count">92</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><h3><span class="bar"></span>工程师绩效</h3></div>
+          <div class="perf-table">
+            <table>
+              <thead><tr><th>工程师</th><th>工单数</th><th>完工率</th><th>平均耗时</th><th>客户评分</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="avatar-sm" style="margin-right:6px">张</span><b style="color:var(--text-strong)">张工</b><small style="color:var(--text-faint);margin-left:4px">西北区</small></td>
+                  <td class="cell-num">68</td>
+                  <td><div class="perf-rate"><div class="bar"><div class="fill" style="width:96%"></div></div><span class="pct">96%</span></div></td>
+                  <td>2.8h</td>
+                  <td><span class="score-stars">★★★★★</span></td>
+                </tr>
+                <tr>
+                  <td><span class="avatar-sm" style="margin-right:6px">李</span><b style="color:var(--text-strong)">李工</b><small style="color:var(--text-faint);margin-left:4px">西北区</small></td>
+                  <td class="cell-num">54</td>
+                  <td><div class="perf-rate"><div class="bar"><div class="fill" style="width:92%"></div></div><span class="pct">92%</span></div></td>
+                  <td>3.1h</td>
+                  <td><span class="score-stars">★★★★<span style="opacity:.3">★</span></span></td>
+                </tr>
+                <tr>
+                  <td><span class="avatar-sm" style="margin-right:6px">王</span><b style="color:var(--text-strong)">王工</b><small style="color:var(--text-faint);margin-left:4px">华东区</small></td>
+                  <td class="cell-num">64</td>
+                  <td><div class="perf-rate"><div class="bar"><div class="fill" style="width:98%"></div></div><span class="pct">98%</span></div></td>
+                  <td>2.2h</td>
+                  <td><span class="score-stars">★★★★★</span></td>
+                </tr>
+                <tr>
+                  <td><span class="avatar-sm" style="margin-right:6px">赵</span><b style="color:var(--text-strong)">赵工</b><small style="color:var(--text-faint);margin-left:4px">华北区</small></td>
+                  <td class="cell-num">46</td>
+                  <td><div class="perf-rate"><div class="bar"><div class="fill" style="width:90%"></div></div><span class="pct">90%</span></div></td>
+                  <td>3.5h</td>
+                  <td><span class="score-stars">★★★★<span style="opacity:.3">★</span></span></td>
+                </tr>
+                <tr>
+                  <td><span class="avatar-sm" style="margin-right:6px">孙</span><b style="color:var(--text-strong)">孙工</b><small style="color:var(--text-faint);margin-left:4px">华中区</small></td>
+                  <td class="cell-num">38</td>
+                  <td><div class="perf-rate"><div class="bar"><div class="fill" style="width:88%"></div></div><span class="pct">88%</span></div></td>
+                  <td>3.8h</td>
+                  <td><span class="score-stars">★★★<span style="opacity:.3">★★</span></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

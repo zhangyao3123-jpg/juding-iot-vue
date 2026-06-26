@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设备监控 · 久鼎物联网售后管理系统</title>
+<style>
+/* ============================================================
+   Fluent 毛玻璃主题 - 设备监控列表页
+   ============================================================ */
+:root{
+  --bg-base:#eef1f8;
+  --primary:#0ea5e9; --primary-2:#8b5cf6;
+  --primary-soft:rgba(14,165,233,.12); --primary2-soft:rgba(139,92,246,.12);
+  --text-strong:#0f172a; --text-base:#334155; --text-dim:#64748b; --text-faint:#94a3b8;
+  --glass:rgba(255,255,255,.62); --glass-hover:rgba(255,255,255,.78);
+  --line:rgba(15,23,42,.08); --line-soft:rgba(15,23,42,.05);
+  --ok:#10b981; --warn:#f59e0b; --err:#ef4444;
+  --shadow-sm:0 1px 3px rgba(15,23,42,.06);
+  --shadow-md:0 8px 24px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.04);
+  --shadow-lg:0 18px 48px rgba(79,70,229,.12),0 6px 14px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:"Segoe UI Variable","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color:var(--text-base);background:var(--bg-base);overflow:hidden;-webkit-font-smoothing:antialiased;
+}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:linear-gradient(135deg,#eef1f8 0%,#e9edf6 50%,#f0eef8 100%)}
+.bg .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 22s ease-in-out infinite}
+.bg .b1{width:560px;height:560px;left:-140px;top:-100px;background:radial-gradient(circle,rgba(14,165,233,.5),transparent 70%)}
+.bg .b2{width:520px;height:520px;right:-120px;top:80px;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%);animation-delay:-7s}
+.bg .b3{width:620px;height:400px;left:30%;bottom:-180px;background:radial-gradient(circle,rgba(99,102,241,.4),transparent 70%);animation-delay:-14s}
+.bg .grid{position:absolute;inset:0;opacity:.4;background-image:linear-gradient(rgba(15,23,42,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,.025) 1px,transparent 1px);background-size:44px 44px}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.06)}66%{transform:translate(-30px,40px) scale(.96)}}
+
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh}
+.topbar{flex:none;height:66px;display:flex;align-items:center;padding:0 22px;gap:18px;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(30px) saturate(1.6);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;min-width:240px}
+.brand .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px;
+  box-shadow:0 8px 20px rgba(14,165,233,.35)}
+.brand .name b{display:block;font-size:15px;color:var(--text-strong);letter-spacing:.3px;line-height:1.15}
+.brand .name small{font-size:10px;color:var(--text-dim);letter-spacing:2px}
+.search{flex:1;max-width:380px;position:relative}
+.search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--line);border-radius:11px;
+  background:rgba(255,255,255,.7);color:var(--text-base);font-size:13px;outline:none;transition:.2s}
+.search input::placeholder{color:var(--text-faint)}
+.search input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-soft);background:#fff}
+.search .ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-faint)}
+.topbar .spacer{flex:1}
+.top-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.5);
+  color:var(--text-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:.2s}
+.icon-btn:hover{color:var(--primary);background:var(--glass-hover);box-shadow:var(--shadow-sm)}
+.icon-btn .dot{position:absolute;top:8px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--err);border:2px solid rgba(255,255,255,.9)}
+.user{display:flex;align-items:center;gap:10px;padding:5px 14px 5px 6px;border-radius:30px;border:1px solid var(--line);
+  background:rgba(255,255,255,.55);cursor:pointer;transition:.2s}
+.user:hover{background:var(--glass-hover);box-shadow:var(--shadow-sm)}
+.user .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary-2),var(--primary));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.user .uname{font-size:13px;color:var(--text-strong);line-height:1.1}
+.user .urole{font-size:10px;color:var(--text-dim)}
+
+.body{flex:1;display:flex;min-height:0}
+.sidebar{flex:none;width:234px;background:rgba(255,255,255,.45);backdrop-filter:blur(28px) saturate(1.5);
+  border-right:1px solid var(--line);padding:16px 12px;overflow-y:auto}
+.nav-group-title{font-size:10px;color:var(--text-faint);letter-spacing:2px;padding:14px 12px 8px;text-transform:uppercase;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:11px;color:var(--text-dim);
+  font-size:13.5px;cursor:pointer;margin-bottom:2px;transition:.18s;font-weight:500}
+.nav-item:hover{background:rgba(255,255,255,.7);color:var(--text-base);box-shadow:var(--shadow-sm)}
+.nav-item.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  box-shadow:0 8px 20px rgba(14,165,233,.32)}
+.nav-sub{padding-left:38px;font-size:13px;color:var(--text-dim);padding:8px 14px;border-radius:9px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:8px}
+.nav-sub:hover{background:rgba(255,255,255,.5);color:var(--text-base)}
+.nav-sub.active{color:var(--primary);background:var(--primary-soft);font-weight:600}
+.nav-sub.active::before{content:"";width:3px;height:14px;border-radius:3px;background:var(--primary)}
+.nav-item .badge{margin-left:auto;background:var(--err);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:700}
+.nav-item .ico{width:18px;text-align:center}
+
+.content{flex:1;overflow-y:auto;padding:24px 28px}
+.page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+.page-head h1{font-size:23px;color:var(--text-strong);font-weight:700}
+.page-head .crumb{font-size:12px;color:var(--text-dim);margin-top:6px}
+.page-head .crumb b{color:var(--primary)}
+
+/* 概览统计条 */
+.mini-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.mini-stat{padding:14px 16px;border-radius:14px;background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(20px) saturate(1.4);box-shadow:var(--shadow-sm);display:flex;align-items:center;gap:13px;transition:.2s}
+.mini-stat:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.mini-stat .mi{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:19px;flex:none}
+.mini-stat .mt{font-size:11px;color:var(--text-dim);font-weight:500}
+.mini-stat .mv{font-size:22px;font-weight:800;color:var(--text-strong);letter-spacing:-.3px;line-height:1.1}
+
+/* 面板 */
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(20px) saturate(1.4);
+  box-shadow:var(--shadow-md);overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line-soft)}
+.panel-head h3{font-size:15px;color:var(--text-strong);display:flex;align-items:center;gap:9px;font-weight:600}
+.panel-head h3 .bar{width:4px;height:15px;border-radius:3px;background:linear-gradient(180deg,var(--primary),var(--primary-2))}
+.tab-group{display:flex;gap:4px;padding:4px;background:rgba(15,23,42,.04);border-radius:11px}
+.tab-item{padding:7px 16px;border-radius:8px;font-size:13px;font-weight:500;color:var(--text-dim);cursor:pointer;transition:.18s}
+.tab-item:hover{color:var(--text-base)}
+.tab-item.active{background:#fff;color:var(--primary);box-shadow:var(--shadow-sm);font-weight:600}
+
+.toolbar{display:flex;align-items:center;gap:10px;padding:16px 20px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.input-mini{height:36px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.6);
+  color:var(--text-base);padding:0 12px;font-size:13px;outline:none;width:160px;transition:.18s}
+.input-mini::placeholder{color:var(--text-faint)}
+.input-mini:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft);background:#fff}
+.select-mini{height:36px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.6);
+  color:var(--text-base);padding:0 30px 0 12px;font-size:13px;outline:none;cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");background-repeat:no-repeat;background-position:right 11px center}
+.btn{height:36px;padding:0 15px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;
+  box-shadow:0 6px 18px rgba(14,165,233,.3)}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.6);border:1px solid var(--line);color:var(--text-dim)}
+.btn-ghost:hover{color:var(--primary);border-color:var(--primary);background:#fff}
+.btn-sm{height:30px;padding:0 11px;font-size:12px;border-radius:8px}
+
+table.dt{width:100%;border-collapse:collapse}
+table.dt thead th{text-align:left;font-size:12px;color:var(--text-dim);font-weight:600;letter-spacing:.3px;
+  padding:13px 16px;background:rgba(241,244,250,.6);border-bottom:1px solid var(--line);white-space:nowrap}
+table.dt tbody td{padding:13px 16px;border-bottom:1px solid var(--line-soft);font-size:13px;color:var(--text-base)}
+table.dt tbody tr{transition:.15s}
+table.dt tbody tr:hover{background:rgba(14,165,233,.05)}
+.cell-mono{font-family:"Consolas",monospace;color:var(--primary-2);font-size:12.5px;font-weight:600}
+.cell-num{font-variant-numeric:tabular-nums;color:var(--text-strong);font-weight:600}
+.cell-temp{font-variant-numeric:tabular-nums;font-weight:700}
+.cell-temp.normal{color:var(--ok)}
+.cell-temp.warn{color:var(--warn)}
+.temp-bar{display:inline-flex;align-items:center;gap:6px}
+.temp-bar .track{width:40px;height:6px;background:rgba(15,23,42,.08);border-radius:3px;overflow:hidden}
+.temp-bar .fill{height:100%;border-radius:3px}
+
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.pill.ok{background:rgba(16,185,129,.14);color:var(--ok)}
+.pill.warn{background:rgba(245,158,11,.14);color:var(--warn)}
+.pill.off{background:rgba(100,116,139,.14);color:var(--text-dim)}
+.pill.err{background:rgba(239,68,68,.13);color:var(--err)}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.ok::before{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.tag-num{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 7px;
+  border-radius:6px;font-size:11px;font-weight:700;background:var(--primary-soft);color:var(--primary)}
+.tag-warranty{font-size:11px;font-weight:600;color:var(--ok);background:rgba(16,185,129,.12);padding:2px 8px;border-radius:6px}
+.tag-warranty.expire{color:var(--warn);background:rgba(245,158,11,.12)}
+
+.row-action{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--primary);cursor:pointer;font-weight:600;transition:.15s}
+.row-action:hover{color:var(--primary-2)}
+.row-action.danger{color:var(--text-dim)}
+.row-action.danger:hover{color:var(--err)}
+
+.pager{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-top:1px solid var(--line-soft)}
+.pager .info-txt{font-size:12px;color:var(--text-dim)}
+.pager .info-txt b{color:var(--text-strong)}
+.page-nums{display:flex;gap:5px}
+.page-nums .pn{min-width:32px;height:32px;border-radius:9px;border:1px solid var(--line);
+  display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--text-dim);cursor:pointer;transition:.18s;background:rgba(255,255,255,.5)}
+.page-nums .pn:hover{color:var(--primary);border-color:var(--primary);background:#fff}
+.page-nums .pn.active{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent;
+  box-shadow:0 4px 12px rgba(14,165,233,.35)}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(100,116,139,.25);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+
+/* ============================================================
+   ★ 绑定设备抽屉（右侧滑出）
+   ============================================================ */
+.drawer-mask{position:fixed;inset:0;background:rgba(5,8,20,.45);backdrop-filter:blur(4px);z-index:100;opacity:0;visibility:hidden;transition:.3s}
+.drawer-mask.open{opacity:1;visibility:visible}
+.bind-drawer{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:92vw;z-index:101;
+  background:var(--bg-base);border-left:1px solid var(--line);
+  transform:translateX(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.25)}
+.bind-drawer.open{transform:translateX(0)}
+.drawer-head{flex:none;padding:20px 22px;border-bottom:1px solid var(--line);
+  background:var(--glass);backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.drawer-head .dh-left{min-width:0}
+.drawer-head h2{font-size:18px;color:var(--text-strong);font-weight:700;display:flex;align-items:center;gap:9px}
+.drawer-head h2 .ic{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex;align-items:center;justify-content:center;font-size:15px}
+.drawer-head .sub{font-size:11.5px;color:var(--text-dim);margin-top:4px;margin-left:39px}
+.drawer-close{width:34px;height:34px;flex:none;border-radius:10px;border:1px solid var(--line);
+  background:var(--glass);color:var(--text-dim);cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:.2s}
+.drawer-close:hover{color:var(--err);border-color:var(--err);background:#fff}
+
+/* 步骤条（紧凑横排） */
+.d-steps{flex:none;display:flex;align-items:center;justify-content:center;gap:0;padding:14px 20px;border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.3)}
+.d-step{display:flex;align-items:center;gap:9px}
+.d-step .n{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;flex:none;border:2px solid var(--line);background:var(--glass);color:var(--text-dim)}
+.d-step.active .n{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent;box-shadow:0 4px 10px rgba(14,165,233,.3)}
+.d-step.done .n{background:var(--ok);color:#fff;border-color:transparent}
+.d-step b{font-size:12.5px;color:var(--text-strong);font-weight:600}
+.d-step small{display:none}
+.d-line{width:46px;height:2px;background:var(--line);margin:0 8px;border-radius:2px}
+.d-line.done{background:linear-gradient(90deg,var(--ok),var(--primary))}
+
+.drawer-body{flex:1;overflow-y:auto;padding:16px 20px 24px}
+
+/* 抽屉内分节 */
+.sec{background:var(--glass);border:1px solid var(--line);border-radius:14px;backdrop-filter:blur(20px);
+  box-shadow:var(--shadow-sm);overflow:hidden;margin-bottom:14px}
+.sec-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line-soft)}
+.sec-head h4{font-size:13.5px;color:var(--text-strong);font-weight:600;display:flex;align-items:center;gap:8px}
+.sec-head h4 .b{width:3px;height:13px;border-radius:3px;background:linear-gradient(180deg,var(--primary),var(--primary-2))}
+.sec-head .hint{font-size:11px;color:var(--text-dim)}
+.sec-body{padding:16px}
+
+/* 扫码区 */
+.scan-box{display:flex;gap:8px;align-items:stretch}
+.scan-input{flex:1;position:relative}
+.scan-input input{width:100%;height:48px;border:1.5px dashed var(--primary);border-radius:11px;
+  background:var(--primary-soft);font-size:13px;font-weight:600;color:var(--primary);padding:0 12px 0 38px;outline:none;transition:.18s}
+.scan-input input:focus{box-shadow:0 0 0 4px var(--primary-soft);background:#fff}
+.scan-input .si{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:18px}
+.scan-btn{height:48px;padding:0 16px;border-radius:11px;border:none;cursor:pointer;font-size:13px;font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;box-shadow:0 6px 16px rgba(14,165,233,.3);
+  display:flex;align-items:center;gap:6px;transition:.2s;white-space:nowrap}
+.scan-btn:hover{filter:brightness(1.06)}
+
+/* 自动识别区 */
+.auto-zone{display:flex;flex-direction:column;align-items:center;margin-bottom:14px}
+.auto-main{width:100%;display:flex;align-items:center;gap:16px;padding:18px 16px;border-radius:12px;
+  border:1.5px dashed rgba(14,165,233,.4);background:var(--primary-soft);cursor:pointer;
+  transition:.25s;position:relative;overflow:hidden}
+.auto-main:hover{border-color:var(--primary);background:rgba(14,165,233,.18);box-shadow:0 0 0 4px rgba(14,165,233,.08)}
+.auto-main.listening{border-style:solid;border-color:var(--primary);background:rgba(14,165,233,.22)}
+.auto-main.listening .auto-pulse{display:block}
+.auto-pulse{display:none;position:absolute;left:40px;top:50%;transform:translateY(-50%);width:60px;height:60px;
+  border-radius:50%;background:rgba(14,165,233,.15);animation:autoPing 2s ease-out infinite;pointer-events:none}
+@keyframes autoPing{0%{transform:translateY(-50%) scale(1);opacity:1}100%{transform:translateY(-50%) scale(2.2);opacity:0}}
+.auto-ico{flex:none;width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 18px rgba(14,165,233,.3);position:relative;z-index:1}
+.auto-main.listening .auto-ico{animation:icoGlow 1.5s ease-in-out infinite}
+@keyframes icoGlow{0%,100%{box-shadow:0 8px 18px rgba(14,165,233,.3)}50%{box-shadow:0 0 30px rgba(14,165,233,.6)}}
+.auto-text{flex:1;min-width:0;position:relative;z-index:1}
+.auto-text b{display:block;font-size:14px;color:var(--text-strong);font-weight:600}
+.auto-text span{display:block;font-size:11.5px;color:var(--text-dim);margin-top:3px}
+.auto-sep{font-size:11px;color:var(--text-faint);margin:10px 0;letter-spacing:2px;position:relative;text-align:center}
+.auto-sep::before,.auto-sep::after{content:"";position:absolute;top:50%;width:60px;height:1px;background:var(--line)}
+.auto-sep::before{right:calc(50% + 30px)}.auto-sep::after{left:calc(50% + 30px)}
+
+/* 识别结果 */
+.detected{margin-top:14px;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.detected-tag{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;color:#fff;
+  background:linear-gradient(135deg,var(--ok),#059669);padding:4px 12px;border-radius:8px;margin-bottom:10px}
+.detected-info{background:rgba(255,255,255,.5);border:1px solid var(--line-soft);border-radius:10px;padding:10px 14px;margin-bottom:10px}
+.di-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:12.5px;border-bottom:1px dashed var(--line-soft)}
+.di-row:last-child{border-bottom:none}
+.di-row span{color:var(--text-dim)}
+.di-row b{color:var(--text-strong);font-weight:600}
+
+.tip-box{margin-top:10px;font-size:11.5px;color:var(--text-dim);padding:9px 12px;
+  background:var(--primary-soft);border-radius:9px;border-left:3px solid var(--primary);line-height:1.5}
+.tip-box b{color:var(--primary)}
+.tip-box{margin-top:10px;font-size:11.5px;color:var(--text-dim);padding:9px 12px;
+  background:var(--primary-soft);border-radius:9px;border-left:3px solid var(--primary);line-height:1.5}
+.tip-box b{color:var(--primary)}
+
+/* 表单（单列） */
+.f-item{margin-bottom:14px}
+.f-item:last-child{margin-bottom:0}
+.f-item label{display:block;font-size:12px;color:var(--text-base);font-weight:500;margin-bottom:6px}
+.f-item label .req{color:var(--err);margin-left:2px}
+.f-item label .opt{font-size:10.5px;color:var(--text-faint);font-weight:400;margin-left:5px}
+.f-ctrl{position:relative}
+.f-ctrl input,.f-ctrl select,.f-ctrl textarea{
+  width:100%;height:40px;border:1px solid var(--line);border-radius:10px;
+  background:rgba(255,255,255,.7);color:var(--text-strong);font-size:13px;padding:0 12px;outline:none;transition:.18s;font-family:inherit}
+.f-ctrl textarea{height:auto;padding:9px 12px;resize:vertical;min-height:64px;line-height:1.5}
+.f-ctrl select{appearance:none;padding-right:30px;cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 11px center}
+.f-ctrl input:focus,.f-ctrl select:focus,.f-ctrl textarea:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft);background:#fff}
+.f-ctrl input::placeholder,.f-ctrl textarea::placeholder{color:var(--text-faint)}
+.f-ctrl.readonly input{background:rgba(241,244,250,.6);color:var(--text-dim)}
+.f-ctrl.with-suffix input{padding-right:48px}
+.f-ctrl .suffix{position:absolute;right:11px;top:50%;transform:translateY(-50%);font-size:11.5px;color:var(--text-dim);pointer-events:none}
+.f-ctrl.with-btn input{padding-right:74px}
+.f-ctrl .inline-btn{position:absolute;right:4px;top:4px;bottom:4px;padding:0 11px;border-radius:8px;border:none;
+  background:var(--primary-soft);color:var(--primary);font-size:11.5px;font-weight:600;cursor:pointer;transition:.15s}
+.f-ctrl .inline-btn:hover{background:var(--primary);color:#fff}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.f-row .f-item{margin-bottom:0}
+
+/* 批量清单 */
+.mini-tbl{width:100%;border-collapse:collapse}
+.mini-tbl thead th{text-align:left;font-size:11px;color:var(--text-dim);font-weight:600;padding:9px 12px;
+  background:rgba(241,244,250,.6);border-bottom:1px solid var(--line)}
+.mini-tbl tbody td{padding:9px 12px;border-bottom:1px solid var(--line-soft);font-size:12px;color:var(--text-base)}
+.mini-tbl tbody tr:hover{background:rgba(14,165,233,.05)}
+.mono{font-family:"Consolas",monospace;color:var(--primary-2);font-weight:600}
+.pill-mini{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:14px;font-weight:600;
+  background:var(--primary-soft);color:var(--primary)}
+.row-del{color:var(--text-faint);cursor:pointer;font-size:12px}
+.row-del:hover{color:var(--err)}
+.mini-tbl-foot{padding:11px 14px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line-soft)}
+.mini-tbl-foot .cnt{font-size:11.5px;color:var(--text-dim)}
+.mini-tbl-foot .cnt b{color:var(--text-strong)}
+.add-more{font-size:12px;color:var(--primary);font-weight:600;cursor:pointer;background:none;border:none;display:flex;align-items:center;gap:4px}
+
+/* 抽屉底部 */
+.drawer-foot{flex:none;padding:14px 20px;border-top:1px solid var(--line);background:var(--glass);backdrop-filter:blur(20px);
+  display:flex;gap:10px;justify-content:flex-end}
+.btn{height:40px;padding:0 18px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;box-shadow:0 6px 16px rgba(14,165,233,.3)}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.6);border:1px solid var(--line);color:var(--text-dim)}
+.btn-ghost:hover{color:var(--text-base);border-color:var(--text-dim);background:#fff}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div>
+    </div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索设备编号、客户、机器码…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="UI样式">🎨</div>
+      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><a href="demo-hub.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📊</span>数据概览</a></div>
+      <div class="nav-item active"><a href="device-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></a></div>
+      <div class="nav-sub active">设备列表</div>
+      <div class="nav-sub">设备地图</div>
+      <div class="nav-sub">设备分组</div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item"><a href="order-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📋</span>工单管理<span class="badge">12</span></a></div>
+      <div class="nav-item"><a href="repair-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🔧</span>维修记录</a></div>
+      <div class="nav-item"><a href="callback-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📞</span>客户回访</a></div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item"><a href="customer-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">👥</span>客户档案</a></div>
+      <div class="nav-item"><a href="device-model.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">⚙️</span>设备型号</a></div>
+      <div class="nav-item"><a href="report-page.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📈</span>统计报表</a></div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item"><a href="system-settings.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🛠️</span>系统设置</a></div>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div>
+          <h1>设备监控</h1>
+          <div class="crumb">首页 / 设备监控 / <b>设备列表</b></div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost">⤓ 导出</button>
+          <button class="btn btn-primary" onclick="openBind()">＋ 绑定新设备</button>
+        </div>
+      </div>
+
+      <!-- 概览统计 -->
+      <div class="mini-stats">
+        <div class="mini-stat">
+          <div class="mi" style="background:var(--primary-soft);color:var(--primary)">🖥️</div>
+          <div><div class="mt">设备总数</div><div class="mv">1,562</div></div>
+        </div>
+        <div class="mini-stat">
+          <div class="mi" style="background:rgba(16,185,129,.14);color:var(--ok)">✓</div>
+          <div><div class="mt">在线运行</div><div class="mv">1,284</div></div>
+        </div>
+        <div class="mini-stat">
+          <div class="mi" style="background:rgba(245,158,11,.14);color:var(--warn)">⚠</div>
+          <div><div class="mt">温度告警</div><div class="mv">7</div></div>
+        </div>
+        <div class="mini-stat">
+          <div class="mi" style="background:rgba(100,116,139,.14);color:var(--text-dim)">⏻</div>
+          <div><div class="mt">离线设备</div><div class="mv">128</div></div>
+        </div>
+      </div>
+
+      <!-- 设备列表 -->
+      <div class="panel">
+        <div class="panel-head">
+          <h3><span class="bar"></span>设备列表</h3>
+          <div class="tab-group">
+            <div class="tab-item active">全部 1562</div>
+            <div class="tab-item">在线 1284</div>
+            <div class="tab-item">告警 7</div>
+            <div class="tab-item">离线 128</div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <input class="input-mini" placeholder="设备编码 / 机器码">
+          <input class="input-mini" placeholder="设备名称">
+          <input class="input-mini" placeholder="客户名称">
+          <select class="select-mini"><option>全部区域</option><option>华东</option><option>华北</option><option>西北</option></select>
+          <select class="select-mini"><option>全部型号</option><option>ZFFCW-200</option><option>ZFFCW-300Pro</option><option>ZFFCW-500</option></select>
+          <button class="btn btn-primary btn-sm">🔍 查询</button>
+          <button class="btn btn-ghost btn-sm">↺ 重置</button>
+          <div style="flex:1"></div>
+          <button class="btn btn-ghost btn-sm">⚙ 列设置</button>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>序号</th><th>压缩机编号</th><th>设备编码</th><th>机器码</th><th>设备名称</th>
+              <th>客户名称</th><th>安装地址</th><th>最新温度</th><th>质保</th><th>状态</th><th>最后上报</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="tag-num">1#</span></td>
+              <td class="cell-mono">ZYS-001</td>
+              <td class="cell-mono">220112521</td>
+              <td class="cell-mono">MC7A8F2D</td>
+              <td>制冷主机A</td>
+              <td>甘肃泰友生物科技</td>
+              <td>兰州市城关区科技产业园</td>
+              <td><div class="temp-bar"><span class="cell-temp normal">23.7℃</span><div class="track"><div class="fill" style="width:38%;background:var(--ok)"></div></div></div></td>
+              <td><span class="tag-warranty">质保中</span></td>
+              <td><span class="pill ok">在线</span></td>
+              <td>2026-06-22 10:41</td>
+              <td>
+                <a href="device-detail.html" class="row-action">详情</a>
+                <span style="color:var(--line);margin:0 4px">|</span>
+                <span class="row-action">工单</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="tag-num">2#</span></td>
+              <td class="cell-mono">ZYS-002</td>
+              <td class="cell-mono">220112522</td>
+              <td class="cell-mono">MC7A8F2E</td>
+              <td>制冷主机B</td>
+              <td>甘肃泰友生物科技</td>
+              <td>兰州市城关区科技产业园</td>
+              <td><div class="temp-bar"><span class="cell-temp warn">29.4℃</span><div class="track"><div class="fill" style="width:68%;background:var(--warn)"></div></div></div></td>
+              <td><span class="tag-warranty">质保中</span></td>
+              <td><span class="pill warn">高温</span></td>
+              <td>2026-06-22 10:41</td>
+              <td>
+                <a href="device-detail.html" class="row-action">详情</a>
+                <span style="color:var(--line);margin:0 4px">|</span>
+                <span class="row-action">工单</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="tag-num">3#</span></td>
+              <td class="cell-mono">ZYS-003</td>
+              <td class="cell-mono">220112523</td>
+              <td class="cell-mono">MC7B1201</td>
+              <td>储液机组</td>
+              <td>山东海化集团</td>
+              <td>潍坊市滨海经济开发区</td>
+              <td><div class="temp-bar"><span class="cell-temp normal">22.1℃</span><div class="track"><div class="fill" style="width:32%;background:var(--ok)"></div></div></div></td>
+              <td><span class="tag-warranty">质保中</span></td>
+              <td><span class="pill ok">在线</span></td>
+              <td>2026-06-22 10:40</td>
+              <td>
+                <a href="device-detail.html" class="row-action">详情</a>
+                <span style="color:var(--line);margin:0 4px">|</span>
+                <span class="row-action">工单</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="tag-num">4#</span></td>
+              <td class="cell-mono">ZYS-004</td>
+              <td class="cell-mono">220112524</td>
+              <td class="cell-mono">MC7B1202</td>
+              <td>螺杆压缩机</td>
+              <td>江苏恒瑞医药</td>
+              <td>连云港市临港产业区</td>
+              <td><div class="temp-bar"><span class="cell-temp normal">21.8℃</span><div class="track"><div class="fill" style="width:30%;background:var(--ok)"></div></div></div></td>
+              <td><span class="tag-warranty expire">即将到期</span></td>
+              <td><span class="pill ok">在线</span></td>
+              <td>2026-06-22 10:39</td>
+              <td>
+                <a href="device-detail.html" class="row-action">详情</a>
+                <span style="color:var(--line);margin:0 4px">|</span>
+                <span class="row-action">工单</span>
+              </div></td>
+            </tr>
+            <tr>
+              <td><span class="tag-num">5#</span></td>
+              <td class="cell-mono">ZYS-005</td>
+              <td class="cell-mono">220112525</td>
+              <td class="cell-mono">MC7C4A88</td>
+              <td>冷凝机组</td>
+              <td>浙江华海药业</td>
+              <td>台州市椒江区化工园</td>
+              <td><span class="cell-temp" style="color:var(--text-faint)">—</span></td>
+              <td><span class="tag-warranty">质保中</span></td>
+              <td><span class="pill off">离线</span></td>
+              <td>2026-06-21 18:22</td>
+              <td>
+                <a href="device-detail.html" class="row-action">详情</a>
+                <span style="color:var(--line);margin:0 4px">|</span>
+                <span class="row-action">工单</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="tag-num">6#</span></td>
+              <td class="cell-mono">ZYS-006</td>
+              <td class="cell-mono">220112526</td>
+              <td class="cell-mono">MC7C4A89</td>
+              <td>制冷主机C</td>
+              <td>河北诚信化工</td>
+              <td>石家庄市循环化工园</td>
+              <td><div class="temp-bar"><span class="cell-temp normal">24.3℃</span><div class="track"><div class="fill" style="width:42%;background:var(--ok)"></div></div></div></td>
+              <td><span class="tag-warranty">质保中</span></td>
+              <td><span class="pill ok">在线</span></td>
+              <td>2026-06-22 10:41</td>
+              <td>
+                <a href="device-detail.html" class="row-action">详情</a>
+                <span style="color:var(--line);margin:0 4px">|</span>
+                <span class="row-action">工单</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="tag-num">7#</span></td>
+              <td class="cell-mono">ZYS-007</td>
+              <td class="cell-mono">220112527</td>
+              <td class="cell-mono">MC7D9B10</td>
+              <td>液泵机组</td>
+              <td>安徽丰原药业</td>
+              <td>蚌埠市固镇经济开发区</td>
+              <td><div class="temp-bar"><span class="cell-temp warn">31.2℃</span><div class="track"><div class="fill" style="width:78%;background:var(--err)"></div></div></div></td>
+              <td><span class="tag-warranty">质保中</span></td>
+              <td><span class="pill err">超温</span></td>
+              <td>2026-06-22 10:41</td>
+              <td>
+                <a href="device-detail.html" class="row-action">详情</a>
+                <span style="color:var(--line);margin:0 4px">|</span>
+                <span class="row-action">工单</span>
+              </td>
+            </tr>
+            <tr>
+              <td><span class="tag-num">8#</span></td>
+              <td class="cell-mono">ZYS-008</td>
+              <td class="cell-mono">220112528</td>
+              <td class="cell-mono">MC7D9B11</td>
+              <td>压缩机主机</td>
+              <td>甘肃泰友生物科技</td>
+              <td>兰州市城关区科技产业园</td>
+              <td><div class="temp-bar"><span class="cell-temp normal">22.6℃</span><div class="track"><div class="fill" style="width:34%;background:var(--ok)"></div></div></div></td>
+              <td><span class="tag-warranty">质保中</span></td>
+              <td><span class="pill ok">在线</span></td>
+              <td>2026-06-22 10:40</td>
+              <td>
+                <a href="device-detail.html" class="row-action">详情</a>
+                <span style="color:var(--line);margin:0 4px">|</span>
+                <span class="row-action">工单</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pager">
+          <div class="info-txt">共 <b>1,562</b> 条，每页 10 条</div>
+          <div class="page-nums">
+            <span class="pn">‹</span>
+            <span class="pn active">1</span>
+            <span class="pn">2</span>
+            <span class="pn">3</span>
+            <span class="pn">4</span>
+            <span class="pn">…</span>
+            <span class="pn">157</span>
+            <span class="pn">›</span>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ 绑定设备抽屉 ============ -->
+<div class="drawer-mask" id="bindMask" onclick="closeBind()"></div>
+<aside class="bind-drawer" id="bindDrawer">
+  <div class="drawer-head">
+    <div class="dh-left">
+      <h2><span class="ic">＋</span>绑定新设备</h2>
+      <div class="sub">扫码识别 → 填写信息 → 确认绑定，支持批量添加</div>
+    </div>
+    <button class="drawer-close" onclick="closeBind()">✕</button>
+  </div>
+
+  <!-- 步骤条 -->
+  <div class="d-steps">
+    <div class="d-step done"><div class="n">✓</div><b>扫码识别</b></div>
+    <div class="d-line done"></div>
+    <div class="d-step active"><div class="n">2</div><b>填写信息</b></div>
+    <div class="d-line"></div>
+    <div class="d-step"><div class="n">3</div><b>确认绑定</b></div>
+  </div>
+
+  <div class="drawer-body">
+    <!-- ① 扫码 -->
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>设备识别</h4><span class="hint">通电后自动上报 / 手动扫码</span></div>
+      <div class="sec-body">
+        <!-- 自动识别入口 -->
+        <div class="auto-zone">
+          <div class="auto-main" onclick="autoDetect()">
+            <div class="auto-pulse"></div>
+            <div class="auto-ico">📡</div>
+            <div class="auto-text">
+              <b>等待设备上报</b>
+              <span>设备通电后，NB-IoT 模块将自动上报机器码，点击开始侦听</span>
+            </div>
+          </div>
+          <div class="auto-sep">或</div>
+        </div>
+        <!-- 手动输入 -->
+        <div class="scan-box">
+          <div class="scan-input">
+            <span class="si">📱</span>
+            <input placeholder="手动输入机器码" value="">
+          </div>
+          <button class="scan-btn">🔍 查询</button>
+        </div>
+        <!-- 识别结果 -->
+        <div class="detected" id="detectedBox" style="display:none">
+          <div class="detected-tag">✓ 已识别设备</div>
+          <div class="detected-info">
+            <div class="di-row"><span>机器码</span><b class="mono" id="detCode">—</b></div>
+            <div class="di-row"><span>设备型号</span><b id="detModel">—</b></div>
+            <div class="di-row"><span>通讯模块</span><b id="detModule">—</b></div>
+            <div class="di-row"><span>固件版本</span><b id="detFw">—</b></div>
+          </div>
+          <div class="tip-box">系统已自动带出型号参数，请在下方确认并填写客户信息。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② 设备信息 -->
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>设备基础信息</h4><span class="hint">带 <span style="color:var(--err)">*</span> 必填</span></div>
+      <div class="sec-body">
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item">
+            <label>设备编码<span class="req">*</span></label>
+            <div class="f-ctrl readonly"><input value="220112529" readonly></div>
+          </div>
+          <div class="f-item">
+            <label>机器码<span class="req">*</span></label>
+            <div class="f-ctrl readonly"><input value="MC7A8F2D" readonly></div>
+          </div>
+        </div>
+        <div class="f-item">
+          <label>设备名称<span class="req">*</span></label>
+          <div class="f-ctrl"><input placeholder="如：制冷主机A" value="制冷主机D"></div>
+        </div>
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item">
+            <label>压缩机编号</label>
+            <div class="f-ctrl"><input value="ZYS-009"></div>
+          </div>
+          <div class="f-item">
+            <label>设备型号<span class="req">*</span></label>
+            <div class="f-ctrl">
+              <select><option>ZFFCW-300Pro</option><option>ZFFCW-200</option><option>ZFFCW-500</option></select>
+            </div>
+          </div>
+        </div>
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item">
+            <label>额定功率</label>
+            <div class="f-ctrl with-suffix"><input value="15"><span class="suffix">kW</span></div>
+          </div>
+          <div class="f-item">
+            <label>额定电压</label>
+            <div class="f-ctrl with-suffix"><input value="380"><span class="suffix">V</span></div>
+          </div>
+        </div>
+        <div class="f-row">
+          <div class="f-item">
+            <label>制冷剂</label>
+            <div class="f-ctrl"><select><option>R404A</option><option>R134a</option><option>R22</option></select></div>
+          </div>
+          <div class="f-item">
+            <label>温度告警阈值</label>
+            <div class="f-ctrl with-suffix"><input value="30"><span class="suffix">℃</span></div>
+          </div>
+        </div>
+        <div class="f-row" style="margin-top:14px">
+          <div class="f-item">
+            <label>投运日期<span class="req">*</span></label>
+            <div class="f-ctrl"><input type="date" value="2026-06-22"></div>
+          </div>
+          <div class="f-item">
+            <label>质保截止<span class="req">*</span></label>
+            <div class="f-ctrl"><input type="date" value="2028-06-22"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ 客户信息 -->
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>客户 / 安装信息</h4></div>
+      <div class="sec-body">
+        <div class="f-item" style="margin-bottom:14px">
+          <label>选择客户<span class="req">*</span></label>
+          <div class="f-ctrl with-btn">
+            <input value="甘肃泰友生物科技有限公司" readonly>
+            <button class="inline-btn">🔍 选择</button>
+          </div>
+        </div>
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item">
+            <label>联系人<span class="opt">自动带出</span></label>
+            <div class="f-ctrl readonly"><input value="王建国" readonly></div>
+          </div>
+          <div class="f-item">
+            <label>联系电话<span class="opt">自动带出</span></label>
+            <div class="f-ctrl readonly"><input value="138 9321 0088" readonly></div>
+          </div>
+        </div>
+        <div class="f-item" style="margin-bottom:14px">
+          <label>安装地址<span class="req">*</span></label>
+          <div class="f-ctrl"><input value="甘肃省兰州市城关区科技产业园 3 号厂房 1F"></div>
+        </div>
+        <div class="f-row">
+          <div class="f-item">
+            <label>指派维护工程师</label>
+            <div class="f-ctrl"><select><option>张工 (西北区)</option><option>李工 (西北区)</option></select></div>
+          </div>
+          <div class="f-item">
+            <label>巡检周期</label>
+            <div class="f-ctrl"><select><option>每 30 天</option><option>每 60 天</option><option>每 90 天</option></select></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 批量清单 -->
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>本次绑定清单</h4><span class="hint">3 台待绑定</span></div>
+      <table class="mini-tbl">
+        <thead><tr><th>编码</th><th>机器码</th><th>名称</th><th>状态</th><th></th></tr></thead>
+        <tbody>
+          <tr><td class="mono">220112529</td><td class="mono">MC7A8F2D</td><td>制冷主机D</td><td><span class="pill-mini">待绑定</span></td><td><span class="row-del">✕</span></td></tr>
+          <tr><td class="mono">220112530</td><td class="mono">MC7A8F2E</td><td>制冷主机E</td><td><span class="pill-mini">待绑定</span></td><td><span class="row-del">✕</span></td></tr>
+          <tr><td class="mono">220112531</td><td class="mono">MC7B1203</td><td>储液机组</td><td><span class="pill-mini">待绑定</span></td><td><span class="row-del">✕</span></td></tr>
+        </tbody>
+      </table>
+      <div class="mini-tbl-foot">
+        <button class="add-more">＋ 继续扫码添加</button>
+        <span class="cnt">共 <b>3</b> 台</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="drawer-foot">
+    <button class="btn btn-ghost" onclick="closeBind()">取消</button>
+    <button class="btn btn-ghost">存草稿</button>
+    <button class="btn btn-primary">✓ 确认绑定 (3 台)</button>
+  </div>
+</aside>
+
+<script>
+function openBind(){document.getElementById('bindMask').classList.add('open');document.getElementById('bindDrawer').classList.add('open')}
+function closeBind(){document.getElementById('bindMask').classList.remove('open');document.getElementById('bindDrawer').classList.remove('open')}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeBind()});
+
+/* 自动侦听（模拟设备通电上报） */
+function autoDetect(){
+  var el=document.querySelector('.auto-main');
+  el.classList.add('listening');
+  el.querySelector('b').textContent='正在侦听…';
+  el.querySelector('span').textContent='等待设备 NB-IoT 模块上报数据';
+  /* 模拟 3 秒后收到上报 */
+  setTimeout(function(){
+    el.classList.remove('listening');
+    el.querySelector('b').textContent='设备已上报 ✓';
+    el.querySelector('span').textContent='MC7A8F2D 上报成功，点击下方重新侦听其他设备';
+    el.style.borderColor='rgba(16,185,129,.5)';el.style.background='rgba(16,185,129,.08)';
+    showDetected('MC7A8F2D');
+  },3000);
+}
+
+/* 手动查询 */
+document.querySelectorAll('.scan-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var input=this.closest('.scan-box').querySelector('input');
+    if(input.value.trim()){showDetected(input.value.trim())}
+  });
+});
+
+/* 显示识别结果 */
+function showDetected(code){
+  var box=document.getElementById('detectedBox');
+  box.style.display='block';
+  document.getElementById('detCode').textContent=code;
+  document.getElementById('detModel').textContent='ZFFCW-300Pro 螺杆式';
+  document.getElementById('detModule').textContent='JD-NB72 (NB-IoT)';
+  document.getElementById('detFw').textContent='FW v3.2.1 (2026-04-12)';
+}
+</script>
+</body>
+</html>

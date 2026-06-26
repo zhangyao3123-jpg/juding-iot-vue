@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>客户回访 · 久鼎物联网售后管理系统</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* 客户回访 - 页面特有样式 */
+.method-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.method-tag.phone{background:rgba(14,165,233,.12);color:var(--primary)}
+.method-tag.visit{background:rgba(16,185,129,.14);color:var(--ok)}
+.method-tag.wechat{background:rgba(139,92,246,.12);color:var(--primary-2)}
+.method-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.stars{display:inline-flex;gap:2px;font-size:14px;letter-spacing:1px;color:var(--warn)}
+.stars .empty{opacity:.25}
+.summary-cell{font-size:12px;color:var(--text-dim);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div></div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索工单号、客户…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><a href="demo-hub.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📊</span>数据概览</a></div>
+      <div class="nav-item"><a href="device-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></a></div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item"><a href="order-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📋</span>工单管理<span class="badge">12</span></a></div>
+      <div class="nav-item"><a href="repair-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🔧</span>维修记录</a></div>
+      <div class="nav-item active"><a href="callback-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📞</span>客户回访</a></div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item"><a href="customer-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">👥</span>客户档案</a></div>
+      <div class="nav-item"><a href="device-model.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">⚙️</span>设备型号</a></div>
+      <div class="nav-item"><a href="report-page.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📈</span>统计报表</a></div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item"><a href="system-settings.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🛠️</span>系统设置</a></div>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div><h1>客户回访</h1><div class="crumb">首页 / 售后服务 / <b>客户回访</b></div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost">⤓ 导出</button>
+          <button class="btn btn-primary" onclick="openDrawer()">＋ 新建回访</button>
+        </div>
+      </div>
+
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="mi" style="background:var(--primary-soft);color:var(--primary)">📞</div><div><div class="mt">回访总数</div><div class="mv">342</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(245,158,11,.14);color:var(--warn)">⏳</div><div><div class="mt">待回访</div><div class="mv">8</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(16,185,129,.14);color:var(--ok)">✓</div><div><div class="mt">已回访</div><div class="mv">320</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:var(--primary2-soft);color:var(--primary-2)">⭐</div><div><div class="mt">满意度</div><div class="mv">4.8<span style="font-size:13px;color:var(--text-dim);font-weight:500">/5</span></div></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3><span class="bar"></span>回访记录</h3>
+          <div class="tab-group">
+            <div class="tab-item active">全部 342</div>
+            <div class="tab-item">待回访 8</div>
+            <div class="tab-item">已回访 320</div>
+            <div class="tab-item">已超期 4</div>
+            <div class="tab-item">已取消 10</div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <input class="input-mini" placeholder="工单号">
+          <input class="input-mini" placeholder="客户名称">
+          <select class="select-mini"><option>全部工程师</option><option>张工</option><option>李工</option><option>王工</option></select>
+          <select class="select-mini"><option>全部方式</option><option>电话回访</option><option>上门回访</option><option>微信回访</option></select>
+          <select class="select-mini"><option>全部满意度</option><option>非常满意</option><option>满意</option><option>一般</option><option>不满意</option></select>
+          <button class="btn btn-primary btn-sm">🔍 查询</button>
+          <button class="btn btn-ghost btn-sm">↺ 重置</button>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>回访编号</th><th>关联工单</th><th>客户名称</th><th>回访方式</th><th>工程师</th>
+              <th>回访内容</th><th>满意度</th><th>回访时间</th><th>状态</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-mono">HF20260622001</td>
+              <td class="cell-mono" style="font-size:12px">GD20260618002</td>
+              <td class="cell-strong">江苏恒瑞医药</td>
+              <td><span class="method-tag phone">📞 电话</span></td>
+              <td><span class="avatar-sm">王</span>王工</td>
+              <td class="summary-cell">客户反馈制冷效果恢复正常，对维修速度满意</td>
+              <td><span class="stars">★★★★★</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-22 10:30</td>
+              <td><span class="pill ok">已回访</span></td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">HF20260621003</td>
+              <td class="cell-mono" style="font-size:12px">GD20260615008</td>
+              <td class="cell-strong">河北诚信化工</td>
+              <td><span class="method-tag visit">🚗 上门</span></td>
+              <td><span class="avatar-sm">张</span>张工</td>
+              <td class="summary-cell">设备运行稳定，客户提出增加季度保养频次建议</td>
+              <td><span class="stars">★★★★<span class="empty">★</span></span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-21 15:00</td>
+              <td><span class="pill ok">已回访</span></td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">HF20260620002</td>
+              <td class="cell-mono" style="font-size:12px">GD20260620003</td>
+              <td class="cell-strong">山东海化集团</td>
+              <td><span class="method-tag wechat">💬 微信</span></td>
+              <td><span class="avatar-sm">李</span>李工</td>
+              <td class="summary-cell">保养后设备各项指标正常，客户满意</td>
+              <td><span class="stars">★★★★★</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-20 11:20</td>
+              <td><span class="pill ok">已回访</span></td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">HF20260622004</td>
+              <td class="cell-mono" style="font-size:12px">GD20260622001</td>
+              <td class="cell-strong">甘肃泰友生物科技</td>
+              <td><span class="method-tag phone">📞 电话</span></td>
+              <td><span class="avatar-sm">张</span>张工</td>
+              <td class="summary-cell" style="color:var(--text-faint)">待回访</td>
+              <td style="font-size:12px;color:var(--text-faint)">—</td>
+              <td style="font-size:12px;color:var(--text-dim)">—</td>
+              <td><span class="pill warn">待回访</span></td>
+              <td><span class="row-action">详情</span> | <span class="row-action">执行</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">HF20260619005</td>
+              <td class="cell-mono" style="font-size:12px">GD20260612006</td>
+              <td class="cell-strong">安徽丰原药业</td>
+              <td><span class="method-tag phone">📞 电话</span></td>
+              <td><span class="avatar-sm">王</span>王工</td>
+              <td class="summary-cell">客户反映传感器校准后有轻微偏差，已安排复检</td>
+              <td><span class="stars">★★★<span class="empty">★★</span></span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-19 09:40</td>
+              <td><span class="pill ok">已回访</span></td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">HF20260618006</td>
+              <td class="cell-mono" style="font-size:12px">GD20260608012</td>
+              <td class="cell-strong">浙江华海药业</td>
+              <td><span class="method-tag visit">🚗 上门</span></td>
+              <td><span class="avatar-sm">李</span>李工</td>
+              <td class="summary-cell">设备离线问题已解决，客户希望加强远程监控</td>
+              <td><span class="stars">★★★★★</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-18 16:10</td>
+              <td><span class="pill ok">已回访</span></td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pager">
+          <div class="info-txt">共 <b>342</b> 条，每页 10 条</div>
+          <div class="page-nums"><span class="pn">‹</span><span class="pn active">1</span><span class="pn">2</span><span class="pn">3</span><span class="pn">…</span><span class="pn">35</span><span class="pn">›</span></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ 新建回访抽屉 ============ -->
+<div class="drawer-mask" id="mask" onclick="closeDrawer()"></div>
+<aside class="d" id="drawer">
+  <div class="d-head">
+    <div style="min-width:0"><h2><span class="ic">📞</span>新建回访</h2><div class="sub">记录客户回访信息，跟踪满意度</div></div>
+    <button class="d-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="d-body">
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>关联工单</h4></div>
+      <div class="sec-body">
+        <div class="f-item"><label>选择关联工单<span class="req">*</span></label>
+          <div class="f-ctrl" style="position:relative">
+            <input placeholder="搜索工单号 / 客户名称" value="GD20260618002 · 江苏恒瑞医药" readonly style="padding-right:74px">
+            <button style="position:absolute;right:4px;top:4px;bottom:4px;padding:0 11px;border-radius:8px;border:none;background:var(--primary-soft);color:var(--primary);font-size:11.5px;font-weight:600;cursor:pointer">🔍 选择</button>
+          </div></div>
+        <div class="f-row">
+          <div class="f-item"><label>客户名称<span class="opt">自动带出</span></label><div class="f-ctrl"><input value="江苏恒瑞医药" readonly style="background:rgba(241,244,250,.6);color:var(--text-dim)"></div></div>
+          <div class="f-item"><label>联系人<span class="opt">自动带出</span></label><div class="f-ctrl"><input value="刘经理 139****2056" readonly style="background:rgba(241,244,250,.6);color:var(--text-dim)"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>回访信息</h4></div>
+      <div class="sec-body">
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item"><label>回访方式<span class="req">*</span></label>
+            <div class="f-ctrl"><select><option>电话回访</option><option>上门回访</option><option>微信回访</option></select></div></div>
+          <div class="f-item"><label>指派工程师<span class="req">*</span></label>
+            <div class="f-ctrl"><select><option>王工 (华东区)</option><option>张工 (西北区)</option><option>李工 (西北区)</option></select></div></div>
+        </div>
+        <div class="f-item"><label>回访记录<span class="req">*</span></label>
+          <div class="f-ctrl"><textarea placeholder="详细记录回访内容、客户反馈等"></textarea></div></div>
+        <div class="f-row" style="margin-top:14px">
+          <div class="f-item"><label>客户满意度<span class="req">*</span></label>
+            <div class="f-ctrl" style="height:auto;padding:8px 0">
+              <div class="star-rating" id="starRating" style="display:flex;gap:6px;font-size:28px;cursor:pointer">
+                <span data-val="1" onclick="setStar(1)" style="color:var(--text-faint)">★</span>
+                <span data-val="2" onclick="setStar(2)" style="color:var(--text-faint)">★</span>
+                <span data-val="3" onclick="setStar(3)" style="color:var(--text-faint)">★</span>
+                <span data-val="4" onclick="setStar(4)" style="color:var(--text-faint)">★</span>
+                <span data-val="5" onclick="setStar(5)" style="color:var(--text-faint)">★</span>
+                <span id="starLabel" style="font-size:13px;color:var(--text-dim);margin-left:8px;align-self:center">请评分</span>
+              </div>
+            </div></div>
+          <div class="f-item"><label>下次回访日期</label>
+            <div class="f-ctrl"><input type="date"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>备注</h4></div>
+      <div class="sec-body">
+        <div class="f-item"><div class="f-ctrl"><textarea placeholder="其他需要记录的信息（选填）"></textarea></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="d-foot">
+    <button class="btn btn-ghost" onclick="closeDrawer()">取消</button>
+    <button class="btn btn-primary">✓ 提交回访</button>
+  </div>
+</aside>
+
+<script>
+function openDrawer(){document.getElementById('mask').classList.add('open');document.getElementById('drawer').classList.add('open')}
+function closeDrawer(){document.getElementById('mask').classList.remove('open');document.getElementById('drawer').classList.remove('open')}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});
+// 星级评分
+var STAR_LABELS=['','非常不满意','不满意','一般','满意','非常满意'];
+function setStar(n){
+  var spans=document.querySelectorAll('#starRating span[data-val]');
+  spans.forEach(function(s){s.style.color=parseInt(s.dataset.val)<=n?'var(--warn)':'var(--text-faint)'});
+  document.getElementById('starLabel').textContent=STAR_LABELS[n];
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>绑定设备 · 久鼎物联网售后管理系统</title>
+<style>
+/* Fluent 毛玻璃主题 - 绑定设备页（与其他页共享变量） */
+:root{
+  --bg-base:#eef1f8;
+  --primary:#0ea5e9; --primary-2:#8b5cf6;
+  --primary-soft:rgba(14,165,233,.12); --primary2-soft:rgba(139,92,246,.12);
+  --text-strong:#0f172a; --text-base:#334155; --text-dim:#64748b; --text-faint:#94a3b8;
+  --glass:rgba(255,255,255,.62); --glass-hover:rgba(255,255,255,.78);
+  --line:rgba(15,23,42,.08); --line-soft:rgba(15,23,42,.05);
+  --ok:#10b981; --warn:#f59e0b; --err:#ef4444;
+  --shadow-sm:0 1px 3px rgba(15,23,42,.06);
+  --shadow-md:0 8px 24px rgba(15,23,42,.08),0 2px 6px rgba(15,23,42,.04);
+  --shadow-lg:0 18px 48px rgba(79,70,229,.12),0 6px 14px rgba(15,23,42,.06);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:"Segoe UI Variable","Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color:var(--text-base);background:var(--bg-base);overflow:hidden;-webkit-font-smoothing:antialiased}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
+  background:linear-gradient(135deg,#eef1f8 0%,#e9edf6 50%,#f0eef8 100%)}
+.bg .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.5;animation:drift 22s ease-in-out infinite}
+.bg .b1{width:560px;height:560px;left:-140px;top:-100px;background:radial-gradient(circle,rgba(14,165,233,.5),transparent 70%)}
+.bg .b2{width:520px;height:520px;right:-120px;top:80px;background:radial-gradient(circle,rgba(139,92,246,.45),transparent 70%);animation-delay:-7s}
+.bg .b3{width:620px;height:400px;left:30%;bottom:-180px;background:radial-gradient(circle,rgba(99,102,241,.4),transparent 70%);animation-delay:-14s}
+.bg .grid{position:absolute;inset:0;opacity:.4;background-image:linear-gradient(rgba(15,23,42,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(15,23,42,.025) 1px,transparent 1px);background-size:44px 44px}
+@keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(40px,-30px) scale(1.06)}66%{transform:translate(-30px,40px) scale(.96)}}
+
+.app{position:relative;z-index:1;display:flex;flex-direction:column;height:100vh}
+.topbar{flex:none;height:66px;display:flex;align-items:center;padding:0 22px;gap:18px;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(30px) saturate(1.6);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:12px;min-width:240px}
+.brand .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:18px;
+  box-shadow:0 8px 20px rgba(14,165,233,.35)}
+.brand .name b{display:block;font-size:15px;color:var(--text-strong);letter-spacing:.3px;line-height:1.15}
+.brand .name small{font-size:10px;color:var(--text-dim);letter-spacing:2px}
+.search{flex:1;max-width:380px;position:relative}
+.search input{width:100%;height:40px;padding:0 16px 0 40px;border:1px solid var(--line);border-radius:11px;
+  background:rgba(255,255,255,.7);color:var(--text-base);font-size:13px;outline:none;transition:.2s}
+.search input::placeholder{color:var(--text-faint)}
+.search input:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-soft);background:#fff}
+.search .ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-faint)}
+.topbar .spacer{flex:1}
+.top-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);background:rgba(255,255,255,.5);
+  color:var(--text-dim);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;transition:.2s}
+.icon-btn:hover{color:var(--primary);background:var(--glass-hover);box-shadow:var(--shadow-sm)}
+.icon-btn .dot{position:absolute;top:8px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--err);border:2px solid rgba(255,255,255,.9)}
+.user{display:flex;align-items:center;gap:10px;padding:5px 14px 5px 6px;border-radius:30px;border:1px solid var(--line);
+  background:rgba(255,255,255,.55);cursor:pointer;transition:.2s}
+.user:hover{background:var(--glass-hover);box-shadow:var(--shadow-sm)}
+.user .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary-2),var(--primary));
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.user .uname{font-size:13px;color:var(--text-strong);line-height:1.1}
+.user .urole{font-size:10px;color:var(--text-dim)}
+
+.body{flex:1;display:flex;min-height:0}
+.sidebar{flex:none;width:234px;background:rgba(255,255,255,.45);backdrop-filter:blur(28px) saturate(1.5);
+  border-right:1px solid var(--line);padding:16px 12px;overflow-y:auto}
+.nav-group-title{font-size:10px;color:var(--text-faint);letter-spacing:2px;padding:14px 12px 8px;text-transform:uppercase;font-weight:700}
+.nav-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:11px;color:var(--text-dim);
+  font-size:13.5px;cursor:pointer;margin-bottom:2px;transition:.18s;font-weight:500}
+.nav-item:hover{background:rgba(255,255,255,.7);color:var(--text-base);box-shadow:var(--shadow-sm)}
+.nav-item.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  box-shadow:0 8px 20px rgba(14,165,233,.32)}
+.nav-sub{padding-left:38px;font-size:13px;color:var(--text-dim);padding:8px 14px;border-radius:9px;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:8px}
+.nav-sub:hover{background:rgba(255,255,255,.5);color:var(--text-base)}
+.nav-sub.active{color:var(--primary);background:var(--primary-soft);font-weight:600}
+.nav-sub.active::before{content:"";width:3px;height:14px;border-radius:3px;background:var(--primary)}
+.nav-item .badge{margin-left:auto;background:var(--err);color:#fff;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:700}
+.nav-item .ico{width:18px;text-align:center}
+
+.content{flex:1;overflow-y:auto;padding:24px 28px 60px}
+.crumb-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.crumb{font-size:12.5px;color:var(--text-dim);display:flex;align-items:center;gap:6px}
+.crumb a{color:var(--primary);text-decoration:none;font-weight:500}
+.crumb a:hover{text-decoration:underline}
+.crumb .sep{color:var(--text-faint)}
+.crumb b{color:var(--text-strong);font-weight:600}
+
+/* ---------- 步骤条 ---------- */
+.steps{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:28px;padding:18px 0}
+.step{display:flex;align-items:center;gap:12px}
+.step .num{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;flex:none;transition:.25s;border:2px solid var(--line);background:var(--glass);color:var(--text-dim)}
+.step.active .num{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;border-color:transparent;
+  box-shadow:0 6px 16px rgba(14,165,233,.35)}
+.step.done .num{background:var(--ok);color:#fff;border-color:transparent}
+.step .stxt b{display:block;font-size:13.5px;color:var(--text-strong);font-weight:600}
+.step .stxt small{font-size:11px;color:var(--text-dim)}
+.step-line{width:80px;height:2px;background:var(--line);margin:0 14px;border-radius:2px}
+.step-line.done{background:linear-gradient(90deg,var(--ok),var(--primary))}
+
+/* ---------- 主面板 ---------- */
+.form-wrap{max-width:1080px;margin:0 auto}
+.panel{background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(20px) saturate(1.4);
+  box-shadow:var(--shadow-md);overflow:hidden;margin-bottom:18px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--line-soft)}
+.panel-head h3{font-size:15px;color:var(--text-strong);display:flex;align-items:center;gap:9px;font-weight:600}
+.panel-head h3 .bar{width:4px;height:15px;border-radius:3px;background:linear-gradient(180deg,var(--primary),var(--primary-2))}
+.panel-head .hint{font-size:11.5px;color:var(--text-dim);display:flex;align-items:center;gap:5px}
+.panel-body{padding:22px 22px 6px}
+
+/* ---------- 表单 ---------- */
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px 22px}
+.form-grid.three{grid-template-columns:repeat(3,1fr)}
+.form-item{margin-bottom:16px}
+.form-item label{display:block;font-size:12.5px;color:var(--text-base);font-weight:500;margin-bottom:7px}
+.form-item label .req{color:var(--err);margin-left:3px}
+.form-item label .tip{font-size:11px;color:var(--text-faint);font-weight:400;margin-left:6px}
+.form-ctrl{position:relative}
+.form-ctrl input,.form-ctrl select,.form-ctrl textarea{
+  width:100%;height:42px;border:1px solid var(--line);border-radius:11px;
+  background:rgba(255,255,255,.7);color:var(--text-strong);font-size:13.5px;padding:0 14px;outline:none;
+  transition:.18s;font-family:inherit;
+}
+.form-ctrl textarea{height:auto;padding:11px 14px;resize:vertical;min-height:80px;line-height:1.5}
+.form-ctrl select{appearance:none;padding-right:34px;cursor:pointer;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path d='M1 1l4 4 4-4' stroke='%2364748b' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+  background-repeat:no-repeat;background-position:right 13px center}
+.form-ctrl input:focus,.form-ctrl select:focus,.form-ctrl textarea:focus{
+  border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-soft);background:#fff}
+.form-ctrl input::placeholder,.form-ctrl textarea::placeholder{color:var(--text-faint)}
+.form-ctrl.with-suffix input{padding-right:50px}
+.form-ctrl .suffix{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:12px;color:var(--text-dim);pointer-events:none}
+.form-ctrl.with-btn input{padding-right:96px}
+.form-ctrl .inline-btn{position:absolute;right:5px;top:5px;bottom:5px;padding:0 12px;border-radius:8px;border:none;
+  background:var(--primary-soft);color:var(--primary);font-size:12px;font-weight:600;cursor:pointer;transition:.15s;display:flex;align-items:center;gap:4px}
+.form-ctrl .inline-btn:hover{background:var(--primary);color:#fff}
+
+.scan-box{display:flex;gap:10px;align-items:stretch}
+.scan-input{flex:1;position:relative}
+.scan-input input{height:54px;border:1.5px dashed var(--primary);border-radius:12px;background:var(--primary-soft);
+  font-size:14px;font-weight:600;color:var(--primary);padding:0 14px 0 44px}
+.scan-input input:focus{box-shadow:0 0 0 4px var(--primary-soft);background:#fff}
+.scan-input .si{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:20px}
+.scan-btn{height:54px;padding:0 22px;border-radius:12px;border:none;cursor:pointer;font-size:14px;font-weight:700;
+  background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;box-shadow:0 8px 20px rgba(14,165,233,.3);
+  display:flex;align-items:center;gap:8px;transition:.2s;white-space:nowrap}
+.scan-btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+
+.form-tip{font-size:12px;color:var(--text-dim);margin-top:8px;display:flex;align-items:flex-start;gap:6px;padding:11px 14px;
+  background:var(--primary-soft);border-radius:10px;border-left:3px solid var(--primary)}
+.form-tip.warn{background:rgba(245,158,11,.1);border-left-color:var(--warn);color:#92400e}
+
+/* ---------- 已绑设备表格 ---------- */
+.dev-mini-table{width:100%;border-collapse:collapse;margin-top:4px}
+.dev-mini-table thead th{text-align:left;font-size:12px;color:var(--text-dim);font-weight:600;padding:11px 14px;
+  background:rgba(241,244,250,.6);border-bottom:1px solid var(--line)}
+.dev-mini-table tbody td{padding:12px 14px;border-bottom:1px solid var(--line-soft);font-size:13px;color:var(--text-base)}
+.dev-mini-table tbody tr:hover{background:rgba(14,165,233,.05)}
+.cell-mono{font-family:"Consolas",monospace;color:var(--primary-2);font-size:12.5px;font-weight:600}
+.tag-num{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:22px;padding:0 7px;
+  border-radius:6px;font-size:11px;font-weight:700;background:var(--primary-soft);color:var(--primary)}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.pill.ok{background:rgba(16,185,129,.14);color:var(--ok)}
+.pill.warn{background:rgba(245,158,11,.14);color:var(--warn)}
+.pill.info{background:var(--primary-soft);color:var(--primary)}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.row-del{color:var(--text-faint);cursor:pointer;font-size:13px;transition:.15s}
+.row-del:hover{color:var(--err)}
+
+/* ---------- 底部按钮 ---------- */
+.form-actions{display:flex;justify-content:center;gap:12px;padding:24px 0 6px}
+.btn{height:44px;padding:0 26px;border-radius:12px;border:none;cursor:pointer;font-size:14px;font-weight:600;
+  display:inline-flex;align-items:center;gap:8px;transition:.2s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2));color:#fff;
+  box-shadow:0 10px 24px rgba(14,165,233,.35);min-width:160px;justify-content:center}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-2px);box-shadow:0 14px 28px rgba(14,165,233,.45)}
+.btn-ghost{background:rgba(255,255,255,.6);border:1px solid var(--line);color:var(--text-dim)}
+.btn-ghost:hover{color:var(--text-base);border-color:var(--text-dim);background:#fff}
+.btn-sm{height:32px;padding:0 13px;font-size:12.5px;border-radius:9px}
+
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(100,116,139,.25);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:var(--primary)}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div>
+    </div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索设备编号、客户、机器码…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="UI样式">🎨</div>
+      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><span class="ico">📊</span>数据概览</div>
+      <div class="nav-item active"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></div>
+      <div class="nav-sub active">设备列表</div>
+      <div class="nav-sub">设备地图</div>
+      <div class="nav-sub">设备分组</div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item"><span class="ico">📋</span>工单管理<span class="badge">12</span></div>
+      <div class="nav-item"><span class="ico">🔧</span>维修记录</div>
+      <div class="nav-item"><span class="ico">📞</span>客户回访</div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item"><span class="ico">👥</span>客户档案</div>
+      <div class="nav-item"><span class="ico">⚙️</span>设备型号</div>
+      <div class="nav-item"><span class="ico">📈</span>统计报表</div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item"><span class="ico">🛠️</span>系统设置</div>
+    </aside>
+
+    <main class="content">
+      <div class="crumb-row">
+        <div class="crumb">
+          <a href="device-list.html">设备监控</a>
+          <span class="sep">/</span>
+          <a href="device-list.html">设备列表</a>
+          <span class="sep">/</span>
+          <b>绑定新设备</b>
+        </div>
+      </div>
+
+      <!-- 步骤条 -->
+      <div class="steps">
+        <div class="step done">
+          <div class="num">✓</div>
+          <div class="stxt"><b>扫码识别</b><small>读取设备机器码</small></div>
+        </div>
+        <div class="step-line done"></div>
+        <div class="step active">
+          <div class="num">2</div>
+          <div class="stxt"><b>填写信息</b><small>设备 + 客户参数</small></div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="num">3</div>
+          <div class="stxt"><b>确认绑定</b><small>提交并验证</small></div>
+        </div>
+      </div>
+
+      <div class="form-wrap">
+        <!-- 步骤1: 扫码识别 -->
+        <div class="panel">
+          <div class="panel-head">
+            <h3><span class="bar"></span>① 设备识别</h3>
+            <span class="hint">📍 扫描或输入设备机身二维码 / 机器码</span>
+          </div>
+          <div class="panel-body">
+            <div class="scan-box">
+              <div class="scan-input">
+                <span class="si">📱</span>
+                <input placeholder="扫描/输入机器码，如 MC7A8F2D" value="MC7A8F2D">
+              </div>
+              <button class="scan-btn">📡 扫码识别</button>
+            </div>
+            <div class="form-tip">
+              <span>💡</span>
+              <span>已识别设备：型号 <b style="color:var(--primary)">ZFFCW-300Pro 螺杆式冷水机组</b>，通讯模块 <b style="color:var(--primary)">JD-NB72 (NB-IoT)</b>，固件版本 <b style="color:var(--primary)">FW v3.2.1</b>。系统已自动带出型号参数，请在下方确认。</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 步骤2: 设备信息 -->
+        <div class="panel">
+          <div class="panel-head">
+            <h3><span class="bar"></span>② 设备基础信息</h3>
+            <span class="hint">带 <span style="color:var(--err)">*</span> 为必填</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-item">
+                <label>设备编码<span class="req">*</span><span class="tip">系统自动生成</span></label>
+                <div class="form-ctrl">
+                  <input value="220112529" readonly style="background:rgba(241,244,250,.6);color:var(--text-dim)">
+                </div>
+              </div>
+              <div class="form-item">
+                <label>机器码<span class="req">*</span></label>
+                <div class="form-ctrl">
+                  <input value="MC7A8F2D" readonly style="background:rgba(241,244,250,.6);color:var(--text-dim)">
+                </div>
+              </div>
+              <div class="form-item">
+                <label>压缩机编号<span class="req">*</span></label>
+                <div class="form-ctrl with-suffix">
+                  <input value="ZYS-009">
+                  <span class="suffix">9#</span>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>设备名称<span class="req">*</span></label>
+                <div class="form-ctrl">
+                  <input placeholder="如：制冷主机A" value="制冷主机D">
+                </div>
+              </div>
+              <div class="form-item">
+                <label>设备型号<span class="req">*</span></label>
+                <div class="form-ctrl">
+                  <select>
+                    <option>ZFFCW-300Pro 螺杆式</option>
+                    <option>ZFFCW-200 活塞式</option>
+                    <option>ZFFCW-500 离心式</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>所属分组</label>
+                <div class="form-ctrl">
+                  <select>
+                    <option>西北区 · 制冷组</option>
+                    <option>华东区 · 制冷组</option>
+                    <option>华北区 · 制冷组</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>额定功率 (kW)</label>
+                <div class="form-ctrl with-suffix">
+                  <input type="number" value="15">
+                  <span class="suffix">kW</span>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>额定电压 (V)</label>
+                <div class="form-ctrl with-suffix">
+                  <input type="number" value="380">
+                  <span class="suffix">V</span>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>制冷剂</label>
+                <div class="form-ctrl">
+                  <select>
+                    <option>R404A</option><option>R134a</option><option>R22</option><option>R407C</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>投运日期<span class="req">*</span></label>
+                <div class="form-ctrl">
+                  <input type="date" value="2026-06-22">
+                </div>
+              </div>
+              <div class="form-item">
+                <label>质保截止<span class="req">*</span></label>
+                <div class="form-ctrl with-suffix">
+                  <input type="date" value="2028-06-22">
+                  <span class="suffix">2年</span>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>温度告警阈值 (℃)</label>
+                <div class="form-ctrl with-suffix">
+                  <input type="number" value="30">
+                  <span class="suffix">℃</span>
+                </div>
+              </div>
+              <div class="form-item" style="grid-column:1/-1">
+                <label>备注说明</label>
+                <div class="form-ctrl">
+                  <textarea placeholder="选填，记录设备特殊配置或现场注意事项…"></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 步骤3: 客户绑定 -->
+        <div class="panel">
+          <div class="panel-head">
+            <h3><span class="bar"></span>③ 客户 / 安装信息</h3>
+            <span class="hint">绑定设备的归属客户</span>
+          </div>
+          <div class="panel-body">
+            <div class="form-grid">
+              <div class="form-item" style="grid-column:1/-1">
+                <label>选择客户<span class="req">*</span></label>
+                <div class="form-ctrl with-btn">
+                  <input value="甘肃泰友生物科技有限公司" readonly placeholder="点击右侧按钮选择客户">
+                  <button class="inline-btn">🔍 选择</button>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>联系人</label>
+                <div class="form-ctrl">
+                  <input value="王建国" readonly style="background:rgba(241,244,250,.6);color:var(--text-dim)">
+                </div>
+              </div>
+              <div class="form-item">
+                <label>联系电话</label>
+                <div class="form-ctrl">
+                  <input value="138 9321 0088" readonly style="background:rgba(241,244,250,.6);color:var(--text-dim)">
+                </div>
+              </div>
+              <div class="form-item" style="grid-column:1/-1">
+                <label>安装地址<span class="req">*</span></label>
+                <div class="form-ctrl">
+                  <input placeholder="详细到厂房编号" value="甘肃省兰州市城关区科技产业园 3 号厂房 1F">
+                </div>
+              </div>
+              <div class="form-item">
+                <label>经度</label>
+                <div class="form-ctrl">
+                  <input value="103.8341">
+                </div>
+              </div>
+              <div class="form-item">
+                <label>纬度</label>
+                <div class="form-ctrl">
+                  <input value="36.0611">
+                </div>
+              </div>
+              <div class="form-item">
+                <label>指派维护工程师</label>
+                <div class="form-ctrl">
+                  <select>
+                    <option>张工 (西北区)</option>
+                    <option>李工 (西北区)</option>
+                    <option>王工 (华东区)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-item">
+                <label>巡检周期</label>
+                <div class="form-ctrl">
+                  <select>
+                    <option>每 30 天</option><option>每 60 天</option><option>每 90 天</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 已绑设备预览 -->
+        <div class="panel">
+          <div class="panel-head">
+            <h3><span class="bar"></span>本次绑定清单</h3>
+            <span class="hint">扫码可连续添加多台，一次提交</span>
+          </div>
+          <table class="dev-mini-table">
+            <thead>
+              <tr><th>序号</th><th>设备编码</th><th>机器码</th><th>设备名称</th><th>型号</th><th>客户</th><th>质保</th><th>状态</th><th>操作</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="tag-num">9#</span></td>
+                <td class="cell-mono">220112529</td>
+                <td class="cell-mono">MC7A8F2D</td>
+                <td>制冷主机D</td>
+                <td>ZFFCW-300Pro</td>
+                <td>甘肃泰友生物科技</td>
+                <td>2028-06-22</td>
+                <td><span class="pill info">待绑定</span></td>
+                <td><span class="row-del">✕ 移除</span></td>
+              </tr>
+              <tr>
+                <td><span class="tag-num">10#</span></td>
+                <td class="cell-mono">220112530</td>
+                <td class="cell-mono">MC7A8F2E</td>
+                <td>制冷主机E</td>
+                <td>ZFFCW-300Pro</td>
+                <td>甘肃泰友生物科技</td>
+                <td>2028-06-22</td>
+                <td><span class="pill info">待绑定</span></td>
+                <td><span class="row-del">✕ 移除</span></td>
+              </tr>
+              <tr>
+                <td><span class="tag-num">11#</span></td>
+                <td class="cell-mono">220112531</td>
+                <td class="cell-mono">MC7B1203</td>
+                <td>储液机组</td>
+                <td>ZFFCW-200</td>
+                <td>甘肃泰友生物科技</td>
+                <td>2028-06-22</td>
+                <td><span class="pill info">待绑定</span></td>
+                <td><span class="row-del">✕ 移除</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:14px 22px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line-soft)">
+            <button class="btn btn-ghost btn-sm">＋ 继续扫码添加</button>
+            <span style="font-size:12px;color:var(--text-dim)">共 <b style="color:var(--text-strong)">3</b> 台设备待绑定</span>
+          </div>
+        </div>
+
+        <!-- 底部操作 -->
+        <div class="form-actions">
+          <button class="btn btn-ghost">← 返回上一步</button>
+          <button class="btn btn-primary">✓ 确认绑定 (3 台)</button>
+          <button class="btn btn-ghost">存为草稿</button>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

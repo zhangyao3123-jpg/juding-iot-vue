@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工单管理 · 久鼎物联网售后管理系统</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* 工单优先级标签 */
+.pri{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:2px 8px;border-radius:6px}
+.pri.urgent{background:rgba(239,68,68,.15);color:var(--err)}
+.pri.high{background:rgba(245,158,11,.15);color:var(--warn)}
+.pri.normal{background:rgba(14,165,233,.12);color:var(--primary)}
+.pri.low{background:rgba(100,116,139,.14);color:var(--text-dim)}
+.pri::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+/* 工单类型图标 */
+.ot-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+.ot-icon.fault{background:rgba(239,68,68,.13);color:var(--err)}
+.ot-icon.maintain{background:rgba(14,165,233,.12);color:var(--primary)}
+.ot-icon.install{background:rgba(16,185,129,.14);color:var(--ok)}
+.ot-icon.advisory{background:rgba(139,92,246,.12);color:var(--primary-2)}
+.td-main{display:flex;align-items:center;gap:10px}
+.td-main .info b{display:block;font-size:13px;color:var(--text-strong);font-weight:600}
+.td-main .info small{font-size:11px;color:var(--text-dim)}
+.avatar-sm{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;margin-right:5px;vertical-align:middle}
+/* 工单进度条 */
+.prog-mini{display:flex;align-items:center;gap:6px}
+.prog-mini .track{width:50px;height:5px;background:rgba(15,23,42,.08);border-radius:3px;overflow:hidden}
+.prog-mini .fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--primary-2));border-radius:3px}
+.prog-mini .pct{font-size:11px;color:var(--text-dim);font-weight:600;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div></div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索工单号、设备、客户…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="UI样式">🎨</div>
+      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><a href="demo-hub.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📊</span>数据概览</a></div>
+      <div class="nav-item"><a href="device-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></a></div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item active"><a href="order-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📋</span>工单管理<span class="badge">12</span></a></div>
+      <div class="nav-item"><a href="repair-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🔧</span>维修记录</a></div>
+      <div class="nav-item"><a href="callback-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📞</span>客户回访</a></div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item"><a href="customer-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">👥</span>客户档案</a></div>
+      <div class="nav-item"><a href="device-model.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">⚙️</span>设备型号</a></div>
+      <div class="nav-item"><a href="report-page.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📈</span>统计报表</a></div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item"><a href="system-settings.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🛠️</span>系统设置</a></div>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div><h1>工单管理</h1><div class="crumb">首页 / 售后服务 / <b>工单管理</b></div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost">⤓ 导出</button>
+          <button class="btn btn-primary" onclick="openDrawer('order')">＋ 新建工单</button>
+        </div>
+      </div>
+
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="mi" style="background:var(--primary-soft);color:var(--primary)">📋</div><div><div class="mt">工单总数</div><div class="mv">186</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(245,158,11,.14);color:var(--warn)">⏳</div><div><div class="mt">待处理</div><div class="mv">12</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(14,165,233,.12);color:var(--primary)">🔧</div><div><div class="mt">处理中</div><div class="mv">28</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(16,185,129,.14);color:var(--ok)">✓</div><div><div class="mt">本月完工</div><div class="mv">142</div></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3><span class="bar"></span>工单列表</h3>
+          <div class="tab-group">
+            <div class="tab-item active">全部 186</div>
+            <div class="tab-item">待派单 4</div>
+            <div class="tab-item">处理中 28</div>
+            <div class="tab-item">待验收 8</div>
+            <div class="tab-item">已完成 142</div>
+            <div class="tab-item">已关闭 4</div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <input class="input-mini" placeholder="工单号">
+          <input class="input-mini" placeholder="客户名称">
+          <input class="input-mini" placeholder="设备编码">
+          <select class="select-mini"><option>全部类型</option><option>故障维修</option><option>定期保养</option><option>安装调试</option><option>技术咨询</option></select>
+          <select class="select-mini"><option>全部优先级</option><option>紧急</option><option>高</option><option>普通</option><option>低</option></select>
+          <select class="select-mini"><option>全部工程师</option><option>张工</option><option>李工</option><option>王工</option></select>
+          <button class="btn btn-primary btn-sm">🔍 查询</button>
+          <button class="btn btn-ghost btn-sm">↺ 重置</button>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>工单号</th><th>类型</th><th>设备 / 客户</th><th>优先级</th><th>负责人</th>
+              <th>进度</th><th>状态</th><th>创建时间</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-mono">GD20260622001</td>
+              <td><div class="td-main"><span class="ot-icon fault">⚠</span><span>故障维修</span></div></td>
+              <td><div class="cell-strong">ZFFCW1445</div><div style="font-size:11px;color:var(--text-dim)">甘肃泰友生物科技</div></td>
+              <td><span class="pri urgent">紧急</span></td>
+              <td><span class="avatar-sm">张</span>张工</td>
+              <td><div class="prog-mini"><div class="track"><div class="fill" style="width:40%"></div></div><span class="pct">40%</span></div></td>
+              <td><span class="pill warn">处理中</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-22 10:41</td>
+              <td><span class="row-action">详情</span> | <span class="row-action">处理</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260620003</td>
+              <td><div class="td-main"><span class="ot-icon maintain">🔧</span><span>定期保养</span></div></td>
+              <td><div class="cell-strong">ZFFCW1446</div><div style="font-size:11px;color:var(--text-dim)">山东海化集团</div></td>
+              <td><span class="pri normal">普通</span></td>
+              <td><span class="avatar-sm">李</span>李工</td>
+              <td><div class="prog-mini"><div class="track"><div class="fill" style="width:75%"></div></div><span class="pct">75%</span></div></td>
+              <td><span class="pill info">待验收</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-20 14:22</td>
+              <td><span class="row-action">详情</span> | <span class="row-action">验收</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260618002</td>
+              <td><div class="td-main"><span class="ot-icon fault">⚠</span><span>故障维修</span></div></td>
+              <td><div class="cell-strong">ZFFCW1447</div><div style="font-size:11px;color:var(--text-dim)">江苏恒瑞医药</div></td>
+              <td><span class="pri high">高</span></td>
+              <td><span class="avatar-sm">王</span>王工</td>
+              <td><div class="prog-mini"><div class="track"><div class="fill" style="width:100%"></div></div><span class="pct">100%</span></div></td>
+              <td><span class="pill ok">已完成</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-18 09:15</td>
+              <td><span class="row-action">详情</span> | <span class="row-action">评价</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260622004</td>
+              <td><div class="td-main"><span class="ot-icon install">📦</span><span>安装调试</span></div></td>
+              <td><div class="cell-strong">ZFFCW1512</div><div style="font-size:11px;color:var(--text-dim)">河北诚信化工</div></td>
+              <td><span class="pri normal">普通</span></td>
+              <td><span class="avatar-sm">张</span>张工</td>
+              <td><div class="prog-mini"><div class="track"><div class="fill" style="width:15%"></div></div><span class="pct">15%</span></div></td>
+              <td><span class="pill purple">待派单</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-22 08:30</td>
+              <td><span class="row-action">详情</span> | <span class="row-action">派单</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260615005</td>
+              <td><div class="td-main"><span class="ot-icon advisory">💬</span><span>技术咨询</span></div></td>
+              <td><div class="cell-strong">ZFFCW1448</div><div style="font-size:11px;color:var(--text-dim)">浙江华海药业</div></td>
+              <td><span class="pri low">低</span></td>
+              <td><span class="avatar-sm">李</span>李工</td>
+              <td><div class="prog-mini"><div class="track"><div class="fill" style="width:60%"></div></div><span class="pct">60%</span></div></td>
+              <td><span class="pill warn">处理中</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-15 16:40</td>
+              <td><span class="row-action">详情</span> | <span class="row-action">处理</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260612006</td>
+              <td><div class="td-main"><span class="ot-icon maintain">🔧</span><span>定期保养</span></div></td>
+              <td><div class="cell-strong">ZFFCW1513</div><div style="font-size:11px;color:var(--text-dim)">安徽丰原药业</div></td>
+              <td><span class="pri normal">普通</span></td>
+              <td><span class="avatar-sm">王</span>王工</td>
+              <td><div class="prog-mini"><div class="track"><div class="fill" style="width:100%"></div></div><span class="pct">100%</span></div></td>
+              <td><span class="pill ok">已完成</span></td>
+              <td style="font-size:12px;color:color:var(--text-dim)">06-12 11:20</td>
+              <td><span class="row-action">详情</span> | <span class="row-action">评价</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pager">
+          <div class="info-txt">共 <b>186</b> 条，每页 10 条</div>
+          <div class="page-nums"><span class="pn">‹</span><span class="pn active">1</span><span class="pn">2</span><span class="pn">3</span><span class="pn">…</span><span class="pn">19</span><span class="pn">›</span></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ 新建工单抽屉 ============ -->
+<div class="drawer-mask" id="mask" onclick="closeDrawer()"></div>
+<aside class="d" id="drawer">
+  <div class="d-head">
+    <div style="min-width:0"><h2><span class="ic">＋</span>新建工单</h2><div class="sub">填写工单信息并派单</div></div>
+    <button class="d-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="d-body">
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>工单信息</h4><span class="hint">带 <span style="color:var(--err)">*</span> 必填</span></div>
+      <div class="sec-body">
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item"><label>工单类型<span class="req">*</span></label>
+            <div class="f-ctrl"><select><option>故障维修</option><option>定期保养</option><option>安装调试</option><option>技术咨询</option></select></div></div>
+          <div class="f-item"><label>优先级<span class="req">*</span></label>
+            <div class="f-ctrl"><select><option>紧急</option><option>高</option><option selected>普通</option><option>低</option></select></div></div>
+        </div>
+        <div class="f-item" style="margin-bottom:14px"><label>工单标题<span class="req">*</span></label>
+          <div class="f-ctrl"><input placeholder="简述问题，如：制冷主机A 排气压力偏高"></div></div>
+        <div class="f-item"><label>问题描述<span class="req">*</span></label>
+          <div class="f-ctrl"><textarea placeholder="详细描述故障现象、影响范围等"></textarea></div></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>关联设备 / 客户</h4></div>
+      <div class="sec-body">
+        <div class="f-item" style="margin-bottom:14px"><label>选择设备<span class="req">*</span></label>
+          <div class="f-ctrl" style="position:relative">
+            <input placeholder="搜索设备编码 / 名称" value="ZFFCW1445 · 制冷主机A" readonly style="padding-right:74px">
+            <button style="position:absolute;right:4px;top:4px;bottom:4px;padding:0 11px;border-radius:8px;border:none;background:var(--primary-soft);color:var(--primary);font-size:11.5px;font-weight:600;cursor:pointer">🔍 选择</button>
+          </div></div>
+        <div class="f-row">
+          <div class="f-item"><label>客户名称<span class="opt">自动带出</span></label><div class="f-ctrl"><input value="甘肃泰友生物科技" readonly style="background:rgba(241,244,250,.6);color:var(--text-dim)"></div></div>
+          <div class="f-item"><label>联系人<span class="opt">自动带出</span></label><div class="f-ctrl"><input value="王建国 138****0088" readonly style="background:rgba(241,244,250,.6);color:var(--text-dim)"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>派工信息</h4></div>
+      <div class="sec-body">
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item"><label>指派工程师<span class="req">*</span></label>
+            <div class="f-ctrl"><select><option>张工 (西北区)</option><option>李工 (西北区)</option><option>王工 (华东区)</option></select></div></div>
+          <div class="f-item"><label>预约上门时间<span class="req">*</span></label>
+            <div class="f-ctrl"><input type="datetime-local"></div></div>
+        </div>
+        <div class="f-item"><label>服务地址<span class="req">*</span></label>
+          <div class="f-ctrl"><input value="甘肃省兰州市城关区科技产业园 3 号厂房"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="d-foot">
+    <button class="btn btn-ghost" onclick="closeDrawer()">取消</button>
+    <button class="btn btn-ghost">存草稿</button>
+    <button class="btn btn-primary">✓ 创建工单</button>
+  </div>
+</aside>
+
+<script>
+function openDrawer(){document.getElementById('mask').classList.add('open');document.getElementById('drawer').classList.add('open')}
+function closeDrawer(){document.getElementById('mask').classList.remove('open');document.getElementById('drawer').classList.remove('open')}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});
+</script>
+</body>
+</html>

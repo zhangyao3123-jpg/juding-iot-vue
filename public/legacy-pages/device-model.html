@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设备型号 · 久鼎物联网售后管理系统</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* 设备型号 - 页面特有样式 */
+.series-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px}
+.series-tag.s200{background:rgba(14,165,233,.12);color:var(--primary)}
+.series-tag.s300{background:rgba(139,92,246,.12);color:var(--primary-2)}
+.series-tag.s500{background:rgba(16,185,129,.14);color:var(--ok)}
+.series-tag.part{background:rgba(245,158,11,.14);color:var(--warn)}
+.spec-grid{display:flex;flex-wrap:wrap;gap:6px 14px}
+.spec-grid span{font-size:12px;color:var(--text-dim)}
+.spec-grid span b{color:var(--text-strong);font-weight:600;margin-right:3px}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div></div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索型号、名称…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><a href="demo-hub.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📊</span>数据概览</a></div>
+      <div class="nav-item"><a href="device-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></a></div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item"><a href="order-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📋</span>工单管理<span class="badge">12</span></a></div>
+      <div class="nav-item"><a href="repair-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🔧</span>维修记录</a></div>
+      <div class="nav-item"><a href="callback-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📞</span>客户回访</a></div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item"><a href="customer-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">👥</span>客户档案</a></div>
+      <div class="nav-item active"><a href="device-model.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">⚙️</span>设备型号</a></div>
+      <div class="nav-item"><a href="report-page.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📈</span>统计报表</a></div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item"><a href="system-settings.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🛠️</span>系统设置</a></div>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div><h1>设备型号</h1><div class="crumb">首页 / 业务管理 / <b>设备型号</b></div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost">⤓ 导出</button>
+          <button class="btn btn-primary" onclick="openDrawer()">＋ 新增型号</button>
+        </div>
+      </div>
+
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="mi" style="background:var(--primary-soft);color:var(--primary)">📋</div><div><div class="mt">型号总数</div><div class="mv">12</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(16,185,129,.14);color:var(--ok)">🖥️</div><div><div class="mt">在用设备</div><div class="mv">1,562</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:var(--primary2-soft);color:var(--primary-2)">📁</div><div><div class="mt">型号系列</div><div class="mv">4</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(245,158,11,.14);color:var(--warn)">🕐</div><div><div class="mt">最近更新</div><div class="mv">3<span style="font-size:13px;color:var(--text-dim);font-weight:500">天前</span></div></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3><span class="bar"></span>型号列表</h3>
+          <div class="tab-group">
+            <div class="tab-item active">全部 12</div>
+            <div class="tab-item">JDF-200 系列</div>
+            <div class="tab-item">JDF-300 系列</div>
+            <div class="tab-item">JDF-500 系列</div>
+            <div class="tab-item">配件</div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <input class="input-mini" placeholder="型号名称">
+          <select class="select-mini"><option>全部系列</option><option>JDF-200 系列</option><option>JDF-300 系列</option><option>JDF-500 系列</option><option>配件</option></select>
+          <select class="select-mini"><option>全部状态</option><option>在用</option><option>已停用</option></select>
+          <button class="btn btn-primary btn-sm">🔍 查询</button>
+          <button class="btn btn-ghost btn-sm">↺ 重置</button>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>型号编号</th><th>型号名称</th><th>所属系列</th><th>额定功率</th><th>制冷剂</th>
+              <th>通讯方式</th><th>设备数量</th><th>创建时间</th><th>状态</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-mono">MX001</td>
+              <td class="cell-strong">JDF-200</td>
+              <td><span class="series-tag s200">JDF-200</span></td>
+              <td class="cell-num">15 kW</td>
+              <td>R22</td>
+              <td>4G + 有线</td>
+              <td class="cell-num">328</td>
+              <td style="font-size:12px;color:var(--text-dim)">2024-03-15</td>
+              <td><span class="pill ok">在用</span></td>
+              <td><span class="row-action">详情</span> | <span class="row-action">编辑</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">MX002</td>
+              <td class="cell-strong">JDF-200S</td>
+              <td><span class="series-tag s200">JDF-200</span></td>
+              <td class="cell-num">18 kW</td>
+              <td>R404A</td>
+              <td>4G + 有线</td>
+              <td class="cell-num">156</td>
+              <td style="font-size:12px;color:var(--text-dim)">2024-06-20</td>
+              <td><span class="pill ok">在用</span></td>
+              <td><span class="row-action">详情</span> | <span class="row-action">编辑</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">MX003</td>
+              <td class="cell-strong">JDF-300Pro</td>
+              <td><span class="series-tag s300">JDF-300</span></td>
+              <td class="cell-num">30 kW</td>
+              <td>R404A</td>
+              <td>4G + WiFi</td>
+              <td class="cell-num">486</td>
+              <td style="font-size:12px;color:var(--text-dim)">2024-01-10</td>
+              <td><span class="pill ok">在用</span></td>
+              <td><span class="row-action">详情</span> | <span class="row-action">编辑</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">MX004</td>
+              <td class="cell-strong">JDF-300</td>
+              <td><span class="series-tag s300">JDF-300</span></td>
+              <td class="cell-num">25 kW</td>
+              <td>R22</td>
+              <td>4G</td>
+              <td class="cell-num">210</td>
+              <td style="font-size:12px;color:var(--text-dim)">2023-09-08</td>
+              <td><span class="pill ok">在用</span></td>
+              <td><span class="row-action">详情</span> | <span class="row-action">编辑</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">MX005</td>
+              <td class="cell-strong">JDF-500</td>
+              <td><span class="series-tag s500">JDF-500</span></td>
+              <td class="cell-num">55 kW</td>
+              <td>R507A</td>
+              <td>4G + WiFi + 有线</td>
+              <td class="cell-num">142</td>
+              <td style="font-size:12px;color:var(--text-dim)">2024-08-22</td>
+              <td><span class="pill ok">在用</span></td>
+              <td><span class="row-action">详情</span> | <span class="row-action">编辑</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">MX006</td>
+              <td class="cell-strong">JDF-500L</td>
+              <td><span class="series-tag s500">JDF-500</span></td>
+              <td class="cell-num">75 kW</td>
+              <td>R507A</td>
+              <td>4G + WiFi + 有线</td>
+              <td class="cell-num">68</td>
+              <td style="font-size:12px;color:var(--text-dim)">2025-02-14</td>
+              <td><span class="pill ok">在用</span></td>
+              <td><span class="row-action">详情</span> | <span class="row-action">编辑</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">MX007</td>
+              <td class="cell-strong">JDF-100（已停用）</td>
+              <td><span class="series-tag part">配件</span></td>
+              <td class="cell-num">8 kW</td>
+              <td>R22</td>
+              <td>GPRS</td>
+              <td class="cell-num">52</td>
+              <td style="font-size:12px;color:var(--text-dim)">2022-05-18</td>
+              <td><span class="pill off">已停用</span></td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">MX008</td>
+              <td class="cell-strong">温控模块 V2</td>
+              <td><span class="series-tag part">配件</span></td>
+              <td class="cell-num">—</td>
+              <td>—</td>
+              <td>RS485</td>
+              <td class="cell-num">120</td>
+              <td style="font-size:12px;color:var(--text-dim)">2025-06-20</td>
+              <td><span class="pill ok">在用</span></td>
+              <td><span class="row-action">详情</span> | <span class="row-action">编辑</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pager">
+          <div class="info-txt">共 <b>12</b> 条</div>
+          <div class="page-nums"><span class="pn">‹</span><span class="pn active">1</span><span class="pn">2</span><span class="pn">›</span></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ 新增型号抽屉 ============ -->
+<div class="drawer-mask" id="mask" onclick="closeDrawer()"></div>
+<aside class="d" id="drawer">
+  <div class="d-head">
+    <div style="min-width:0"><h2><span class="ic">＋</span>新增型号</h2><div class="sub">填写设备型号技术参数</div></div>
+    <button class="d-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="d-body">
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>基本信息</h4></div>
+      <div class="sec-body">
+        <div class="f-row">
+          <div class="f-item"><label>型号名称<span class="req">*</span></label><div class="f-ctrl"><input placeholder="如：JDF-300Pro"></div></div>
+          <div class="f-item"><label>所属系列<span class="req">*</span></label>
+            <div class="f-ctrl"><select><option>JDF-200 系列</option><option>JDF-300 系列</option><option>JDF-500 系列</option><option>配件</option></select></div></div>
+        </div>
+        <div class="f-item"><label>型号描述</label>
+          <div class="f-ctrl"><textarea placeholder="简要描述型号特点、适用场景等"></textarea></div></div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>技术参数</h4></div>
+      <div class="sec-body">
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item"><label>额定功率<span class="req">*</span></label><div class="f-ctrl" style="position:relative"><input type="number" placeholder="数值"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">kW</span></div></div>
+          <div class="f-item"><label>额定电压</label><div class="f-ctrl" style="position:relative"><input type="number" placeholder="数值"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">V</span></div></div>
+        </div>
+        <div class="f-row" style="margin-bottom:14px">
+          <div class="f-item"><label>制冷剂</label>
+            <div class="f-ctrl"><select><option>R22</option><option>R404A</option><option>R507A</option><option>R134a</option></select></div></div>
+          <div class="f-item"><label>通讯模块</label>
+            <div class="f-ctrl"><select><option>4G</option><option>4G + WiFi</option><option>4G + 有线</option><option>4G + WiFi + 有线</option><option>GPRS</option><option>RS485</option></select></div></div>
+        </div>
+        <div class="f-row">
+          <div class="f-item"><label>温控精度</label><div class="f-ctrl" style="position:relative"><input type="number" placeholder="数值"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">℃</span></div></div>
+          <div class="f-item"><label>外形尺寸 (长×宽×高)</label><div class="f-ctrl"><input placeholder="如：1200×800×1500 mm"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="sec">
+      <div class="sec-head"><h4><span class="b"></span>其他</h4></div>
+      <div class="sec-body">
+        <div class="f-item"><label>备注</label><div class="f-ctrl"><textarea placeholder="选填备注信息"></textarea></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="d-foot">
+    <button class="btn btn-ghost" onclick="closeDrawer()">取消</button>
+    <button class="btn btn-ghost">存草稿</button>
+    <button class="btn btn-primary">✓ 保存型号</button>
+  </div>
+</aside>
+
+<script>
+function openDrawer(){document.getElementById('mask').classList.add('open');document.getElementById('drawer').classList.add('open')}
+function closeDrawer(){document.getElementById('mask').classList.remove('open');document.getElementById('drawer').classList.remove('open')}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});
+</script>
+</body>
+</html>

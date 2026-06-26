@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>系统设置 · 久鼎物联网售后管理系统</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* 系统设置 - 页面特有样式 */
+.settings-layout{display:flex;gap:20px;min-height:0}
+.settings-nav{flex:none;width:220px;display:flex;flex-direction:column;gap:4px;padding:8px 0}
+.sn-item{display:flex;align-items:center;gap:10px;padding:11px 16px;border-radius:11px;font-size:13.5px;
+  color:var(--text-dim);cursor:pointer;font-weight:500;transition:.18s}
+.sn-item:hover{background:var(--glass-hover);color:var(--text-base)}
+.sn-item.active{color:#fff;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  box-shadow:0 6px 16px rgba(14,165,233,.3)}
+.sn-item .ico{width:18px;text-align:center;font-size:15px}
+.settings-body{flex:1;min-width:0;overflow-y:auto}
+.sn-section{margin-bottom:16px}
+.sn-section:last-child{margin-bottom:0}
+/* 开关组件 */
+.switch-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+.switch-row:last-child{border-bottom:none}
+.switch-row .label{font-size:13px;color:var(--text-base);font-weight:500}
+.switch-row .desc{font-size:11.5px;color:var(--text-dim);margin-top:3px}
+.switch{position:relative;width:44px;height:24px;flex:none;cursor:pointer}
+.switch input{opacity:0;width:0;height:0}
+.switch .slider{position:absolute;inset:0;border-radius:12px;background:var(--line);transition:.25s}
+.switch .slider::before{content:"";position:absolute;width:20px;height:20px;border-radius:50%;background:#fff;left:2px;top:2px;transition:.25s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.switch input:checked+.slider{background:linear-gradient(135deg,var(--primary),var(--primary-2))}
+.switch input:checked+.slider::before{transform:translateX(20px)}
+.save-bar{position:sticky;bottom:0;padding:16px 0;background:var(--bg-base);border-top:1px solid var(--line-soft);display:flex;justify-content:flex-end;gap:10px}
+/* 通知设置表格 */
+.notif-table{width:100%;border-collapse:collapse}
+.notif-table thead th{text-align:left;font-size:12px;color:var(--text-dim);font-weight:600;padding:12px 14px;background:rgba(241,244,250,.6);border-bottom:1px solid var(--line)}
+.notif-table tbody td{padding:12px 14px;border-bottom:1px solid var(--line-soft);font-size:13px;color:var(--text-base)}
+.notif-table tbody tr:hover{background:rgba(14,165,233,.04)}
+.notif-checks{display:flex;gap:14px}
+.notif-checks label{display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--text-dim);cursor:pointer}
+.notif-checks input{cursor:pointer}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div></div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><span class="ico">📊</span>数据概览</div>
+      <div class="nav-item"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item"><span class="ico">📋</span>工单管理<span class="badge">12</span></div>
+      <div class="nav-item"><span class="ico">🔧</span>维修记录</div>
+      <div class="nav-item"><span class="ico">📞</span>客户回访</div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item"><span class="ico">👥</span>客户档案</div>
+      <div class="nav-item"><span class="ico">⚙️</span>设备型号</div>
+      <div class="nav-item"><span class="ico">📈</span>统计报表</div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item active"><span class="ico">🛠️</span>系统设置</div>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div><h1>系统设置</h1><div class="crumb">首页 / <b>系统设置</b></div></div>
+      </div>
+
+      <div class="settings-layout">
+        <!-- 左侧设置导航 -->
+        <div class="settings-nav">
+          <div class="sn-item active" onclick="switchTab(this,'tab-basic')"><span class="ico">🏢</span>基础配置</div>
+          <div class="sn-item" onclick="switchTab(this,'tab-alarm')"><span class="ico">🚨</span>告警规则</div>
+          <div class="sn-item" onclick="switchTab(this,'tab-notify')"><span class="ico">🔔</span>通知设置</div>
+          <div class="sn-item" onclick="switchTab(this,'tab-user')"><span class="ico">👤</span>用户管理</div>
+          <div class="sn-item" onclick="switchTab(this,'tab-log')"><span class="ico">📋</span>操作日志</div>
+        </div>
+
+        <!-- 右侧内容区 -->
+        <div class="settings-body">
+
+          <!-- ====== 基础配置 ====== -->
+          <div id="tab-basic" class="sn-section">
+            <div class="sec">
+              <div class="sec-head"><h4><span class="b"></span>公司信息</h4><span class="hint">系统对外显示的公司基本信息</span></div>
+              <div class="sec-body">
+                <div class="f-row" style="margin-bottom:14px">
+                  <div class="f-item"><label>公司名称<span class="req">*</span></label><div class="f-ctrl"><input value="久鼎物联网科技有限公司"></div></div>
+                  <div class="f-item"><label>联系电话<span class="req">*</span></label><div class="f-ctrl"><input value="400-888-0066"></div></div>
+                </div>
+                <div class="f-item"><label>公司地址</label><div class="f-ctrl"><input value="甘肃省兰州市城关区科技产业园 A 座 12 层"></div></div>
+              </div>
+            </div>
+
+            <div class="sec">
+              <div class="sec-head"><h4><span class="b"></span>系统参数</h4><span class="hint">影响系统运行的核心参数</span></div>
+              <div class="sec-body">
+                <div class="f-row" style="margin-bottom:14px">
+                  <div class="f-item"><label>数据保留天数</label>
+                    <div class="f-ctrl"><select><option>30 天</option><option>60 天</option><option selected>90 天</option><option>180 天</option><option>365 天</option></select></div></div>
+                  <div class="f-item"><label>温度默认告警阈值</label>
+                    <div class="f-ctrl" style="position:relative"><input type="number" value="35"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">℃</span></div></div>
+                </div>
+                <div class="f-row" style="margin-bottom:14px">
+                  <div class="f-item"><label>巡检提醒提前天数</label>
+                    <div class="f-ctrl" style="position:relative"><input type="number" value="7"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">天</span></div></div>
+                  <div class="f-item"><label>设备离线告警延迟</label>
+                    <div class="f-ctrl" style="position:relative"><input type="number" value="30"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">分钟</span></div></div>
+                </div>
+                <div class="switch-row">
+                  <div><div class="label">自动派单</div><div class="desc">根据设备区域和工程师负载，自动分配新工单</div></div>
+                  <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="switch-row">
+                  <div><div class="label">保养到期提醒</div><div class="desc">设备保养到期前自动创建提醒工单</div></div>
+                  <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="switch-row">
+                  <div><div class="label">质保到期提醒</div><div class="desc">设备质保到期前 30 天发送通知</div></div>
+                  <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+              </div>
+            </div>
+            <div class="save-bar"><button class="btn btn-ghost">↺ 重置</button><button class="btn btn-primary">✓ 保存配置</button></div>
+          </div>
+
+          <!-- ====== 告警规则 ====== -->
+          <div id="tab-alarm" class="sn-section" style="display:none">
+            <div class="sec">
+              <div class="sec-head"><h4><span class="b"></span>温度告警规则</h4></div>
+              <div class="sec-body">
+                <div class="switch-row">
+                  <div><div class="label">超温告警</div><div class="desc">设备温度超过阈值时触发告警</div></div>
+                  <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="switch-row">
+                  <div><div class="label">低温告警</div><div class="desc">设备温度低于设定值时触发告警</div></div>
+                  <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="switch-row">
+                  <div><div class="label">温度波动告警</div><div class="desc">10 分钟内温度波动超过 ±5℃ 时触发</div></div>
+                  <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+                <div class="f-row" style="margin-top:14px">
+                  <div class="f-item"><label>超温阈值</label><div class="f-ctrl" style="position:relative"><input type="number" value="35"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">℃</span></div></div>
+                  <div class="f-item"><label>低温阈值</label><div class="f-ctrl" style="position:relative"><input type="number" value="-10"><span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:12px">℃</span></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="sec">
+              <div class="sec-head"><h4><span class="b"></span>设备状态告警</h4></div>
+              <div class="sec-body">
+                <div class="switch-row">
+                  <div><div class="label">离线告警</div><div class="desc">设备超过设定时间未上报数据时触发</div></div>
+                  <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+                <div class="switch-row">
+                  <div><div class="label">电量低告警</div><div class="desc">设备备用电池电量低于 20% 时触发</div></div>
+                  <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+              </div>
+            </div>
+            <div class="save-bar"><button class="btn btn-ghost">↺ 重置</button><button class="btn btn-primary">✓ 保存规则</button></div>
+          </div>
+
+          <!-- ====== 通知设置 ====== -->
+          <div id="tab-notify" class="sn-section" style="display:none">
+            <div class="sec">
+              <div class="sec-head"><h4><span class="b"></span>通知渠道配置</h4></div>
+              <div class="sec-body" style="padding:0">
+                <table class="notif-table">
+                  <thead><tr><th>事件类型</th><th>系统通知</th><th>短信</th><th>邮件</th><th>企业微信</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td class="cell-strong">设备超温告警</td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox" checked></td>
+                    </tr>
+                    <tr>
+                      <td class="cell-strong">设备离线告警</td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox"></td>
+                      <td><input type="checkbox"></td>
+                      <td><input type="checkbox" checked></td>
+                    </tr>
+                    <tr>
+                      <td class="cell-strong">新工单派发</td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox"></td>
+                      <td><input type="checkbox" checked></td>
+                    </tr>
+                    <tr>
+                      <td class="cell-strong">工单状态变更</td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox"></td>
+                      <td><input type="checkbox"></td>
+                      <td><input type="checkbox" checked></td>
+                    </tr>
+                    <tr>
+                      <td class="cell-strong">保养到期提醒</td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox"></td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox"></td>
+                    </tr>
+                    <tr>
+                      <td class="cell-strong">质保到期提醒</td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox"></td>
+                      <td><input type="checkbox" checked></td>
+                      <td><input type="checkbox"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="save-bar"><button class="btn btn-ghost">↺ 重置</button><button class="btn btn-primary">✓ 保存通知设置</button></div>
+          </div>
+
+          <!-- ====== 用户管理 ====== -->
+          <div id="tab-user" class="sn-section" style="display:none">
+            <div class="sec">
+              <div class="sec-head"><h4><span class="b"></span>系统用户</h4><span class="hint">共 6 个用户</span></div>
+              <div class="sec-body" style="padding:0">
+                <table class="dt">
+                  <thead><tr><th>用户</th><th>角色</th><th>手机号</th><th>负责区域</th><th>最后登录</th><th>状态</th><th>操作</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="avatar-sm" style="margin-right:6px">管</span><b class="cell-strong">管理员</b></td>
+                      <td><span class="pill purple">超级管理员</span></td>
+                      <td class="cell-mono" style="font-size:12px">138****0001</td>
+                      <td>全局</td>
+                      <td style="font-size:12px;color:var(--text-dim)">今天 10:22</td>
+                      <td><span class="pill ok">在线</span></td>
+                      <td><span class="row-action">编辑</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="avatar-sm" style="margin-right:6px">张</span><b class="cell-strong">张工</b></td>
+                      <td><span class="pill info">工程师</span></td>
+                      <td class="cell-mono" style="font-size:12px">139****0088</td>
+                      <td>西北区</td>
+                      <td style="font-size:12px;color:var(--text-dim)">今天 09:45</td>
+                      <td><span class="pill ok">在线</span></td>
+                      <td><span class="row-action">编辑</span> | <span class="row-action">权限</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="avatar-sm" style="margin-right:6px">李</span><b class="cell-strong">李工</b></td>
+                      <td><span class="pill info">工程师</span></td>
+                      <td class="cell-mono" style="font-size:12px">136****2056</td>
+                      <td>西北区</td>
+                      <td style="font-size:12px;color:var(--text-dim)">昨天 17:30</td>
+                      <td><span class="pill off">离线</span></td>
+                      <td><span class="row-action">编辑</span> | <span class="row-action">权限</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="avatar-sm" style="margin-right:6px">王</span><b class="cell-strong">王工</b></td>
+                      <td><span class="pill info">工程师</span></td>
+                      <td class="cell-mono" style="font-size:12px">158****3321</td>
+                      <td>华东区</td>
+                      <td style="font-size:12px;color:var(--text-dim)">今天 08:15</td>
+                      <td><span class="pill ok">在线</span></td>
+                      <td><span class="row-action">编辑</span> | <span class="row-action">权限</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="avatar-sm" style="margin-right:6px">赵</span><b class="cell-strong">赵工</b></td>
+                      <td><span class="pill info">工程师</span></td>
+                      <td class="cell-mono" style="font-size:12px">177****5567</td>
+                      <td>华北区</td>
+                      <td style="font-size:12px;color:var(--text-dim)">06-21 16:50</td>
+                      <td><span class="pill off">离线</span></td>
+                      <td><span class="row-action">编辑</span> | <span class="row-action">权限</span></td>
+                    </tr>
+                    <tr>
+                      <td><span class="avatar-sm" style="margin-right:6px">陈</span><b class="cell-strong">客服小陈</b></td>
+                      <td><span class="pill warn">客服</span></td>
+                      <td class="cell-mono" style="font-size:12px">155****8890</td>
+                      <td>全局</td>
+                      <td style="font-size:12px;color:var(--text-dim)">今天 09:00</td>
+                      <td><span class="pill ok">在线</span></td>
+                      <td><span class="row-action">编辑</span> | <span class="row-action">权限</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- ====== 操作日志 ====== -->
+          <div id="tab-log" class="sn-section" style="display:none">
+            <div class="sec">
+              <div class="sec-head"><h4><span class="b"></span>最近操作日志</h4><span class="hint">最近 100 条</span></div>
+              <div class="sec-body" style="padding:0">
+                <table class="dt">
+                  <thead><tr><th>时间</th><th>操作人</th><th>操作类型</th><th>描述</th><th>IP</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-size:12px;color:var(--text-dim);white-space:nowrap">2026-06-23 10:22</td>
+                      <td><b class="cell-strong">管理员</b></td>
+                      <td><span class="pill info">设置</span></td>
+                      <td style="font-size:12px">修改系统参数：温度告警阈值从 38℃ 改为 35℃</td>
+                      <td class="cell-mono" style="font-size:11px">192.168.1.10</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:12px;color:var(--text-dim);white-space:nowrap">2026-06-23 09:45</td>
+                      <td><b class="cell-strong">张工</b></td>
+                      <td><span class="pill ok">工单</span></td>
+                      <td style="font-size:12px">接收工单 GD20260622001，开始维修处理</td>
+                      <td class="cell-mono" style="font-size:11px">10.0.1.56</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:12px;color:var(--text-dim);white-space:nowrap">2026-06-22 14:22</td>
+                      <td><b class="cell-strong">管理员</b></td>
+                      <td><span class="pill warn">告警</span></td>
+                      <td style="font-size:12px">确认设备 ZFFCW1445 温度告警，创建维修工单</td>
+                      <td class="cell-mono" style="font-size:11px">192.168.1.10</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:12px;color:var(--text-dim);white-space:nowrap">2026-06-22 11:30</td>
+                      <td><b class="cell-strong">管理员</b></td>
+                      <td><span class="pill purple">客户</span></td>
+                      <td style="font-size:12px">新增客户「甘肃泰友生物科技」</td>
+                      <td class="cell-mono" style="font-size:11px">192.168.1.10</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:12px;color:var(--text-dim);white-space:nowrap">2026-06-22 10:41</td>
+                      <td><b class="cell-strong">管理员</b></td>
+                      <td><span class="pill ok">工单</span></td>
+                      <td style="font-size:12px">创建维修工单 GD20260622001，指派张工</td>
+                      <td class="cell-mono" style="font-size:11px">192.168.1.10</td>
+                    </tr>
+                    <tr>
+                      <td style="font-size:12px;color:var(--text-dim);white-space:nowrap">2026-06-22 08:30</td>
+                      <td><b class="cell-strong">管理员</b></td>
+                      <td><span class="pill info">工单</span></td>
+                      <td style="font-size:12px">创建安装工单 GD20260622004，待派单</td>
+                      <td class="cell-mono" style="font-size:11px">192.168.1.10</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="pager" style="margin-top:0">
+              <div class="info-txt">共 <b>1,286</b> 条，每页 10 条</div>
+              <div class="page-nums"><span class="pn">‹</span><span class="pn active">1</span><span class="pn">2</span><span class="pn">3</span><span class="pn">…</span><span class="pn">129</span><span class="pn">›</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<script>
+function switchTab(el,tabId){
+  document.querySelectorAll('.sn-item').forEach(function(item){item.classList.remove('active')});
+  el.classList.add('active');
+  document.querySelectorAll('.sn-section').forEach(function(sec){sec.style.display='none'});
+  document.getElementById(tabId).style.display='block';
+}
+</script>
+</body>
+</html>

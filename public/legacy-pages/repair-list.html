@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>维修记录 · 久鼎物联网售后管理系统</title>
+<link rel="stylesheet" href="common.css">
+<style>
+/* 维修记录 - 页面特有样式 */
+.ot-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+.ot-icon.fault{background:rgba(239,68,68,.13);color:var(--err)}
+.ot-icon.maintain{background:rgba(14,165,233,.12);color:var(--primary)}
+.ot-icon.install{background:rgba(16,185,129,.14);color:var(--ok)}
+.ot-icon.advisory{background:rgba(139,92,246,.12);color:var(--primary-2)}
+.td-main{display:flex;align-items:center;gap:10px}
+.avatar-sm{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-2));
+  display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;margin-right:5px;vertical-align:middle}
+.cost{font-variant-numeric:tabular-nums;color:var(--text-strong);font-weight:700}
+</style>
+</head>
+<body>
+<div class="bg"><div class="grid"></div><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">久</div>
+      <div class="name"><b>久鼎物联网售后管理系统</b><small>JUDING IOT SERVICE</small></div></div>
+    <div class="search"><span class="ico">🔍</span><input placeholder="搜索工单号、设备、客户…"></div>
+    <div class="spacer"></div>
+    <div class="top-actions">
+      <div class="icon-btn" title="数据大屏">🖥</div>
+      <div class="icon-btn" title="通知">🔔<span class="dot"></span></div>
+      <div class="user"><div class="avatar">管</div><div><div class="uname">管理员</div><div class="urole">超级管理员</div></div></div>
+    </div>
+  </header>
+
+  <div class="body">
+    <aside class="sidebar">
+      <div class="nav-group-title">工作台</div>
+      <div class="nav-item"><a href="demo-hub.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📊</span>数据概览</a></div>
+      <div class="nav-item"><a href="device-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🖥️</span>设备监控<span class="badge">3</span></a></div>
+      <div class="nav-group-title">售后服务</div>
+      <div class="nav-item"><a href="order-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📋</span>工单管理<span class="badge">12</span></a></div>
+      <div class="nav-item active"><a href="repair-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🔧</span>维修记录</a></div>
+      <div class="nav-item"><a href="callback-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📞</span>客户回访</a></div>
+      <div class="nav-group-title">业务管理</div>
+      <div class="nav-item"><a href="customer-list.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">👥</span>客户档案</a></div>
+      <div class="nav-item"><a href="device-model.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">⚙️</span>设备型号</a></div>
+      <div class="nav-item"><a href="report-page.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">📈</span>统计报表</a></div>
+      <div class="nav-group-title">系统</div>
+      <div class="nav-item"><a href="system-settings.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:11px"><span class="ico">🛠️</span>系统设置</a></div>
+    </aside>
+
+    <main class="content">
+      <div class="page-head">
+        <div><h1>维修记录</h1><div class="crumb">首页 / 售后服务 / <b>维修记录</b></div></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-ghost">⤓ 导出</button>
+        </div>
+      </div>
+
+      <div class="mini-stats">
+        <div class="mini-stat"><div class="mi" style="background:var(--primary-soft);color:var(--primary)">🔧</div><div><div class="mt">维修总数</div><div class="mv">568</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(16,185,129,.14);color:var(--ok)">✓</div><div><div class="mt">本月完成</div><div class="mv">42</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:rgba(245,158,11,.14);color:var(--warn)">⏱</div><div><div class="mt">平均耗时</div><div class="mv">3.2h</div></div></div>
+        <div class="mini-stat"><div class="mi" style="background:var(--primary2-soft);color:var(--primary-2)">⭐</div><div><div class="mt">客户好评率</div><div class="mv">98.6%</div></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h3><span class="bar"></span>维修记录列表</h3>
+          <div class="tab-group">
+            <div class="tab-item active">全部 568</div>
+            <div class="tab-item">维修中 18</div>
+            <div class="tab-item">待配件 6</div>
+            <div class="tab-item">已完成 532</div>
+            <div class="tab-item">已评价 12</div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <input class="input-mini" placeholder="工单号">
+          <input class="input-mini" placeholder="设备编码">
+          <input class="input-mini" placeholder="客户名称">
+          <select class="select-mini"><option>全部工程师</option><option>张工</option><option>李工</option><option>王工</option></select>
+          <select class="select-mini"><option>全部时间</option><option>本周</option><option>本月</option><option>本季度</option></select>
+          <button class="btn btn-primary btn-sm">🔍 查询</button>
+          <button class="btn btn-ghost btn-sm">↺ 重置</button>
+        </div>
+        <table class="dt">
+          <thead>
+            <tr>
+              <th>工单号</th><th>类型</th><th>设备 / 客户</th><th>故障描述</th><th>工程师</th>
+              <th>耗时</th><th>费用</th><th>状态</th><th>完工时间</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="cell-mono">GD20260622001</td>
+              <td><div class="td-main"><span class="ot-icon fault">⚠</span><span>故障维修</span></div></td>
+              <td><div class="cell-strong">ZFFCW1445</div><div style="font-size:11px;color:var(--text-dim)">甘肃泰友生物科技</div></td>
+              <td style="font-size:12px;color:var(--text-base);max-width:180px">制冷主机A 排气压力偏高，需更换压缩机阀门</td>
+              <td><span class="avatar-sm">张</span>张工</td>
+              <td style="font-size:12px;color:var(--text-dim)">—</td>
+              <td style="font-size:12px;color:var(--text-dim)">—</td>
+              <td><span class="pill warn">维修中</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">—</td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260621005</td>
+              <td><div class="td-main"><span class="ot-icon fault">⚠</span><span>故障维修</span></div></td>
+              <td><div class="cell-strong">ZFFCW1446</div><div style="font-size:11px;color:var(--text-dim)">山东海化集团</div></td>
+              <td style="font-size:12px;color:var(--text-base);max-width:180px">温控器显示异常，温度读数偏差超过 3℃</td>
+              <td><span class="avatar-sm">李</span>李工</td>
+              <td style="font-size:12px;color:var(--text-dim)">—</td>
+              <td style="font-size:12px;color:var(--text-dim)">—</td>
+              <td><span class="pill info">待配件</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">—</td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260620003</td>
+              <td><div class="td-main"><span class="ot-icon maintain">🔧</span><span>定期保养</span></div></td>
+              <td><div class="cell-strong">ZFFCW1446</div><div style="font-size:11px;color:var(--text-dim)">山东海化集团</div></td>
+              <td style="font-size:12px;color:var(--text-base);max-width:180px">季度保养：更换冷冻油、清洗冷凝器、检查管路</td>
+              <td><span class="avatar-sm">李</span>李工</td>
+              <td class="cell-num">4.5h</td>
+              <td class="cost">¥2,800</td>
+              <td><span class="pill ok">已完成</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-20 18:50</td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260618002</td>
+              <td><div class="td-main"><span class="ot-icon fault">⚠</span><span>故障维修</span></div></td>
+              <td><div class="cell-strong">ZFFCW1447</div><div style="font-size:11px;color:var(--text-dim)">江苏恒瑞医药</div></td>
+              <td style="font-size:12px;color:var(--text-base);max-width:180px">制冷效果差，蒸发器结霜严重，需检测制冷剂</td>
+              <td><span class="avatar-sm">王</span>王工</td>
+              <td class="cell-num">2.8h</td>
+              <td class="cost">¥1,500</td>
+              <td><span class="pill ok">已完成</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-18 15:30</td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260615008</td>
+              <td><div class="td-main"><span class="ot-icon install">📦</span><span>安装调试</span></div></td>
+              <td><div class="cell-strong">ZFFCW1512</div><div style="font-size:11px;color:var(--text-dim)">河北诚信化工</div></td>
+              <td style="font-size:12px;color:var(--text-base);max-width:180px">新设备到场安装、管路连接、系统调试运行</td>
+              <td><span class="avatar-sm">张</span>张工</td>
+              <td class="cell-num">6.0h</td>
+              <td class="cost">¥5,200</td>
+              <td><span class="pill ok">已完成</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-15 17:20</td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+            <tr>
+              <td class="cell-mono">GD20260612006</td>
+              <td><div class="td-main"><span class="ot-icon maintain">🔧</span><span>定期保养</span></div></td>
+              <td><div class="cell-strong">ZFFCW1513</div><div style="font-size:11px;color:var(--text-dim)">安徽丰原药业</div></td>
+              <td style="font-size:12px;color:var(--text-base);max-width:180px">半年保养：更换滤芯、校准传感器、检查电气</td>
+              <td><span class="avatar-sm">王</span>王工</td>
+              <td class="cell-num">3.0h</td>
+              <td class="cost">¥1,800</td>
+              <td><span class="pill ok">已完成</span></td>
+              <td style="font-size:12px;color:var(--text-dim)">06-12 14:10</td>
+              <td><span class="row-action">详情</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="pager">
+          <div class="info-txt">共 <b>568</b> 条，每页 10 条</div>
+          <div class="page-nums"><span class="pn">‹</span><span class="pn active">1</span><span class="pn">2</span><span class="pn">3</span><span class="pn">…</span><span class="pn">57</span><span class="pn">›</span></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>
